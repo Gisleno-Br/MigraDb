@@ -1,0 +1,654 @@
+*HMGS-MINIGUI-IDE Two-Way Form Designer Generated Code
+*OPEN SOURCE PROJECT 2005-2016 Walter Formigoni http://sourceforge.net/projects/hmgs-minigui/
+
+DEFINE WINDOW TEMPLATE AT 157 , 290 WIDTH 742 HEIGHT 454 MODAL NOSIZE NOSYSMENU ON INIT InitCadPro()
+
+  DEFINE TAB Tab_1 AT 0,0 WIDTH 724 HEIGHT 373 VALUE 1 ON CHANGE ChgTab(This.Value) 
+
+    DEFINE PAGE 'Dados Cadastrais' IMAGE 'new.bmp'
+
+        DEFINE LABEL Label_1
+               ROW    55
+               COL    15
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Id Produto : "
+               FONTNAME "Verdana"
+               FONTBOLD .T.
+        END LABEL  
+
+        DEFINE LABEL Label_2
+               ROW    79
+               COL    15
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Descrição "
+               FONTNAME "Verdana"
+               FONTBOLD .T.
+               FONTCOLOR {0,0,128}
+        END LABEL  
+
+        DEFINE LABEL Label_3
+               ROW    103
+               COL    15
+               WIDTH  185
+               HEIGHT 24
+               VALUE "Unidade "
+               FONTNAME "Verdana"
+        END LABEL  
+
+        DEFINE LABEL Label_4
+               ROW    127
+               COL    15
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Categoria "
+               FONTNAME "Verdana"
+        END LABEL  
+
+        DEFINE LABEL Label_5
+               ROW    151
+               COL    15
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Grupo "
+               FONTNAME "Verdana"
+        END LABEL  
+
+        DEFINE LABEL Label_6
+               ROW    176
+               COL    15
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Cod. Barras "
+               FONTNAME "Verdana"
+        END LABEL  
+
+        DEFINE LABEL Label_7
+               ROW    200
+               COL    15
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Cod. Interno "
+               FONTNAME "Verdana"
+        END LABEL  
+
+        DEFINE LABEL Label_8
+               ROW    224
+               COL    15
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Fornecedor "
+               FONTNAME "Verdana"
+        END LABEL  
+
+        DEFINE FRAME Frame_2
+               ROW    249
+               COL    2
+               WIDTH  716
+               HEIGHT 120
+               FONTNAME 'Arial'
+               FONTBOLD .T.
+               CAPTION "Valores"
+               BACKCOLOR {230,230,230}
+        END FRAME  
+
+        DEFINE LABEL Label_9
+               ROW    270
+               COL    15
+               WIDTH  120
+               HEIGHT 22
+               VALUE "Preço a Vista "
+               FONTNAME "Verdana"
+               FONTBOLD .T.
+               FONTCOLOR {0,0,128}
+        END LABEL  
+
+        DEFINE LABEL Label_10
+               ROW    294
+               COL    15
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Preço a Prazo "
+               FONTNAME "Verdana"
+        END LABEL  
+
+        DEFINE LABEL Label_11
+               ROW    319
+               COL    15
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Preço Custo "
+               FONTNAME "Verdana"
+        END LABEL  
+
+        DEFINE LABEL Label_12
+               ROW    343
+               COL    15
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Tipo Produto "
+               FONTNAME "Verdana"
+        END LABEL  
+
+        DEFINE LABEL Label_13
+               ROW    55
+               COL    500
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Status Cadastro "
+               FONTNAME "Verdana"
+               FONTBOLD .T.
+        END LABEL  
+
+        DEFINE LABEL Label_14
+               ROW    79
+               COL    530
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Observações"
+               FONTNAME "Verdana"
+        END LABEL  
+
+        DEFINE LABEL LblIdProd
+               ROW    55
+               COL    110
+               WIDTH  120
+               HEIGHT 24
+               VALUE "                           "
+               FONTNAME "Verdana"
+               FONTSIZE 10
+               FONTCOLOR {64,128,128}
+        END LABEL  
+
+        DEFINE LABEL Lblstatus
+               ROW    55
+               COL    610
+               WIDTH  71
+               HEIGHT 24
+               VALUE "Normal"
+               FONTNAME "Verdana"
+               FONTBOLD .T.
+               FONTCOLOR {0,0,128}
+        END LABEL  
+
+        DEFINE TEXTBOX descricao
+               ROW    77
+               COL    110
+               WIDTH  370
+               HEIGHT 22
+               FONTNAME 'Arial'
+               ONCHANGE ProdChg()
+               MAXLENGTH 45
+        END TEXTBOX 
+
+        DEFINE COMBOBOX cmbUnidade
+               ROW    100
+               COL    110
+               WIDTH  185
+               HEIGHT 150
+               ITEMS aUnidades
+               FONTNAME 'Arial'
+               TOOLTIP ''
+               ONCHANGE ProdChg()
+        END COMBOBOX  
+
+        DEFINE COMBOBOX cmbCateg
+               ROW    125
+               COL    110
+               WIDTH  185
+               HEIGHT 150
+               ITEMS aCategorias
+               FONTNAME 'Arial'
+               TOOLTIP ''
+               ONCHANGE ProdChg()
+        END COMBOBOX  
+
+        DEFINE COMBOBOX CmbGrupo
+               ROW    149
+               COL    110
+               WIDTH  185
+               HEIGHT 150
+               ITEMS aGrupos
+               FONTNAME 'Arial'
+               TOOLTIP ''
+               ONCHANGE ProdChg()
+        END COMBOBOX  
+
+        DEFINE TEXTBOX codbarras
+               ROW    174
+               COL    110
+               WIDTH  240
+               HEIGHT 22
+               FONTNAME 'Arial'
+               MAXLENGTH 14
+        END TEXTBOX 
+
+        DEFINE TEXTBOX codinterno
+               ROW    198
+               COL    110
+               WIDTH  120
+               HEIGHT 22
+               FONTNAME 'Arial'
+               MAXLENGTH 15
+        END TEXTBOX 
+
+        DEFINE TEXTBOX codforne
+               ROW    221
+               COL    111
+               WIDTH  65
+               HEIGHT 22
+               FONTNAME 'Arial'
+               TOOLTIP "F3 - Consulta Cadastro"
+               ONLOSTFOCUS VldForne( This.Value )
+               INPUTMASK "999999"
+               NUMERIC  .T.
+        END TEXTBOX 
+
+        DEFINE LABEL LblFornec
+               ROW    225
+               COL    270
+               WIDTH  250
+               HEIGHT 24
+               VALUE "--"
+               FONTNAME "Verdana"
+               FONTBOLD .T.
+               TRANSPARENT .T.
+               FONTCOLOR {64,128,128}
+        END LABEL  
+        
+      DEFINE TEXTBOX precoVista
+					ROW	267
+					COL	110
+					WIDTH 90
+					HEIGHT 22
+					VALUE 0
+					TOOLTIP " Preço a Vista" 
+					NUMERIC .T.
+					INPUTMASK '@Z 99,999.99'										
+					RIGHTALIGN .T.
+		  END TEXTBOX     
+		
+		  DEFINE TEXTBOX precoPrazo
+					ROW	292
+					COL	110
+					WIDTH 90
+					HEIGHT 22
+					VALUE 0
+					TOOLTIP " Preço a Prazo" 
+					NUMERIC .T.
+					INPUTMASK '@Z 99,999.99'										
+					RIGHTALIGN .T.
+		  END TEXTBOX     
+		
+		  DEFINE TEXTBOX precoCusto
+					ROW	316
+					COL	110
+					WIDTH 90
+					HEIGHT 22
+					VALUE 0
+					TOOLTIP " Preço de Custo" 
+					NUMERIC .T.
+					INPUTMASK '@Z 99,999.99'										
+					RIGHTALIGN .T.
+		  END TEXTBOX     	
+
+                
+        DEFINE COMBOBOX CmbTipo
+               ROW    340
+               COL    110
+               WIDTH  185
+               HEIGHT 150
+               ITEMS aTipos
+               FONTNAME 'Arial'
+               TOOLTIP ''
+        END COMBOBOX  
+
+        DEFINE FRAME Frame_1
+               ROW    35
+               COL    2
+               WIDTH  716
+               HEIGHT 215
+               FONTNAME 'Arial'
+               BACKCOLOR {230,230,230}
+        END FRAME  
+
+        DEFINE EDITBOX observacao
+               ROW    103
+               COL    530
+               WIDTH  175
+               HEIGHT 145
+               VALUE ''
+               FONTNAME 'Arial'
+               TOOLTIP ''
+        END EDITBOX  
+
+    END PAGE 
+
+    PAGE 'Outros/Informações' IMAGE 'ic_janela.bmp'
+
+        DEFINE FRAME Caracter
+               ROW    22
+               COL    2
+               WIDTH  714
+               HEIGHT 140
+               FONTNAME 'Arial'
+        END FRAME  
+
+        DEFINE LABEL Label_15
+               ROW    40
+               COL    15
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Caracteristicas "
+               FONTNAME "Verdana"
+        END LABEL  
+
+        DEFINE TEXTBOX Caracteris
+               ROW    37
+               COL    125
+               WIDTH  315
+               HEIGHT 22
+               FONTNAME 'Arial'
+               MAXLENGTH 45
+        END TEXTBOX 
+
+    END PAGE 
+
+    PAGE 'Saldos em Estoque' IMAGE 'menu3.bmp'
+
+        DEFINE FRAME Frame_3
+               ROW    25
+               COL    2
+               WIDTH  717
+               HEIGHT 55
+               FONTNAME 'Arial'
+               CAPTION "        "
+               BACKCOLOR {230,230,230}
+        END FRAME  
+
+        DEFINE LABEL LblProd1
+               ROW    50
+               COL    20
+               WIDTH  450
+               HEIGHT 24
+               VALUE "                                                    "
+               FONTNAME "Verdana"
+               FONTSIZE 10
+               FONTBOLD .T.
+               FONTCOLOR {64,128,128}
+        END LABEL  
+
+        DEFINE GRID GridSaldos
+               ROW    90
+               COL    1
+               WIDTH  720
+               HEIGHT 120
+               HEADERS {'Local' , 'Ult.Entrada','Ult.Saida','Quantidade' }
+               WIDTHS {250,120,120,185}
+               ITEMS {{""}}
+               VALUE 0
+               FONTNAME "Courier New"
+               BACKCOLOR {192,192,192}
+               NOLINES .T.                              
+        END GRID  
+
+        DEFINE LABEL Label_16
+               ROW    230
+               COL    450
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Saldo Total Atual : "
+               FONTBOLD .T.
+        END LABEL  
+
+        DEFINE LABEL lblQSaldo
+               ROW    230
+               COL    585
+               WIDTH  65
+               HEIGHT 24
+               VALUE "0"
+        END LABEL  
+
+    END PAGE 
+
+    PAGE 'Historico' IMAGE 'menu1.bmp'
+
+        DEFINE FRAME Frame_4
+               ROW    25
+               COL    1
+               WIDTH  715
+               HEIGHT 90
+               FONTNAME 'Arial'
+               FONTBOLD .T.
+               CAPTION "Parametros"
+               BACKCOLOR {225,225,225}
+        END FRAME  
+
+        DEFINE LABEL Label_18
+               ROW    80
+               COL    30
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Data Final "
+        END LABEL  
+
+        DEFINE LABEL Label_17
+               ROW    55
+               COL    30
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Data Inicial "
+        END LABEL  
+
+        DEFINE LABEL Label_19
+               ROW    55
+               COL    270
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Local Estoque "
+        END LABEL  
+
+        DEFINE COMBOBOX CmbLocal
+               ROW    50
+               COL    380
+               WIDTH  175
+               HEIGHT 100
+               ITEMS aLocais
+               FONTNAME 'Arial'
+               TOOLTIP ''
+        END COMBOBOX  
+
+        DEFINE LABEL LblProd2
+               ROW    120
+               COL    10
+               WIDTH  450
+               HEIGHT 24
+               VALUE "                                      "
+               FONTNAME "Verdana"
+               FONTBOLD .T.
+        END LABEL  
+
+        DEFINE DATEPICKER dDt1
+               ROW    53
+               COL    110
+               WIDTH  110
+               HEIGHT 22
+               VALUE CTOD('')
+               FONTNAME 'Arial'
+               TOOLTIP ''
+        END DATEPICKER 
+
+        DEFINE DATEPICKER dDt2
+               ROW    76
+               COL    110
+               WIDTH  110
+               HEIGHT 22
+               VALUE CTOD('')
+               FONTNAME 'Arial'
+               TOOLTIP ''
+        END DATEPICKER 
+
+        DEFINE LABEL Label_20
+               ROW    80
+               COL    270
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Tipo Movimento "
+        END LABEL  
+
+        DEFINE COMBOBOX CmbTipoMov
+               ROW    75
+               COL    380
+               WIDTH  175
+               HEIGHT 100
+               ITEMS {'Todos','Entrada','Saida'}
+               VALUE 1
+               FONTNAME 'Arial'
+               TOOLTIP ''
+        END COMBOBOX  
+
+        DEFINE GRID GridMvEstq
+               ROW    150
+               COL    1
+               WIDTH  719
+               HEIGHT 165
+               HEADERS {'Data','Hora','Qtde','Tipo Mov','Documento','Saldo'}
+               WIDTHS {100,65,85,135,155,145}
+               ITEMS {{""}}
+               VALUE 0
+               FONTNAME "Courier New"
+               BACKCOLOR {192,192,192}
+               NOLINES .T.               
+        END GRID  
+
+        DEFINE LABEL Label_21
+               ROW    320
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Total Entradas : "
+        END LABEL  
+
+        DEFINE LABEL Label_22
+               ROW    342
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Total Saidas : "
+        END LABEL  
+
+        DEFINE LABEL LblQEntrada
+               ROW    320
+               COL    150
+               WIDTH  75
+               HEIGHT 24
+               VALUE "0"
+               FONTBOLD .T.
+        END LABEL  
+
+        DEFINE LABEL LblQtSaida
+               ROW    341
+               COL    150
+               WIDTH  120
+               HEIGHT 24
+               VALUE "0"
+               FONTBOLD .T.
+        END LABEL  
+
+        DEFINE LABEL Label_23
+               ROW    320
+               COL    250
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Saldo Final Periodo :"
+        END LABEL  
+
+        DEFINE LABEL LblSaldo
+               ROW    320
+               COL    380
+               WIDTH  120
+               HEIGHT 24
+               VALUE "0"
+               FONTBOLD .T.
+        END LABEL  
+
+        DEFINE LABEL Label332
+               ROW    320
+               COL    510
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Qtde. Registros : "
+               FONTNAME "Verdana"
+               FONTSIZE 8
+               FONTBOLD .T.
+        END LABEL  
+
+        DEFINE LABEL LblQtREg
+               ROW    319
+               COL    620
+               WIDTH  55
+               HEIGHT 24
+               VALUE "0"
+        END LABEL  
+
+    END PAGE 
+
+  END TAB 
+
+     DEFINE Button BtnConfirmar
+            ROW    380
+            COL    480
+            WIDTH  90
+            HEIGHT 24
+            CAPTION "Confirmar"
+            PICTURE "OK.BMP"
+            ACTION GrvProduto(lNew)
+            FONTNAME 'Arial'
+            TOOLTIP ''
+            HANDCURSOR .F.
+     END Button  
+
+     DEFINE Button Button_2
+            ROW    380
+            COL    569
+            WIDTH  120
+            HEIGHT 24
+            CAPTION "Cancelar"
+            PICTURE "cancel.bmp"     
+            ACTION fCadProd.Release()
+            FONTNAME 'Arial'
+            TOOLTIP ''
+            HANDCURSOR .F.
+     END Button  
+
+     DEFINE Button BtnForne
+            ROW    221
+            COL    175
+            WIDTH  84
+            HEIGHT 22
+            CAPTION "Consultar"
+            PICTURE "brw_lupa.bmp"         
+            ACTION SetPesqFor()
+            FONTNAME 'Arial'
+            TOOLTIP "Consulta cadastro de fornecedores - F3"
+            FLAT .T.
+            HANDCURSOR .F.
+     END Button  
+
+     DEFINE Button BtnConsulta
+            ROW    50
+            COL    570
+            WIDTH  100
+            HEIGHT 24
+            CAPTION "Consultar"
+            PICTURE "brw_lupa.bmp"        
+            ACTION MovimProd()
+            FONTNAME 'Arial'
+            TOOLTIP "Realiza a consulta do Historico movimento produto"
+            HANDCURSOR .F.
+     END Button  
+
+END WINDOW
+
+

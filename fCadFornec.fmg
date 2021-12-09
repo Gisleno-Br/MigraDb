@@ -1,0 +1,426 @@
+*HMGS-MINIGUI-IDE Two-Way Form Designer Generated Code
+*OPEN SOURCE PROJECT 2005-2016 Walter Formigoni http://sourceforge.net/projects/hmgs-minigui/
+
+DEFINE WINDOW TEMPLATE AT 136 , 284 WIDTH 855 HEIGHT 499 TITLE "Cadastro de Fornecedores" MODAL NOSIZE NOSYSMENU ON INIT IniCadFor()
+
+  DEFINE TAB Tab_1 AT 0,0 WIDTH 925 HEIGHT 425 VALUE 1 TOOLTIP '' 
+
+    DEFINE PAGE 'Dados Principais' IMAGE 'new.bmp'
+
+        DEFINE LABEL Label_1
+               ROW    53
+               COL    550
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Id Fornecedor : "
+               FONTBOLD .T.
+        END LABEL  
+
+        DEFINE LABEL Label_2
+               ROW    56
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Razão Social/Nome "
+               FONTBOLD .T.
+        END LABEL  
+
+        DEFINE LABEL Label_3
+               ROW    83
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Endereço "
+        END LABEL  
+
+        DEFINE LABEL Label_4
+               ROW    108
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Bairro "
+        END LABEL  
+
+        DEFINE LABEL Label_5
+               ROW    133
+               COL    20
+               WIDTH  385
+               HEIGHT 24
+               VALUE "Cidade "
+        END LABEL  
+
+        DEFINE LABEL Label_6
+               ROW    157
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Uf  "
+        END LABEL  
+
+        DEFINE LABEL LblId
+               ROW    53
+               COL    680
+               WIDTH  120
+               HEIGHT 24
+               VALUE "-------"
+               FONTBOLD .T.
+               FONTCOLOR {0,0,255}
+        END LABEL  
+
+        DEFINE TEXTBOX razao
+               ROW    53
+               COL    150
+               WIDTH  385
+               HEIGHT 22
+               FONTNAME 'Arial'
+               ONCHANGE ChgForne()
+               MAXLENGTH 45
+        END TEXTBOX 
+
+        DEFINE TEXTBOX CnPj
+               ROW    103
+               COL    680
+               WIDTH  145
+               HEIGHT 22
+               FONTNAME 'Arial'
+               ONCHANGE ChgForne()
+               MAXLENGTH 14
+        END TEXTBOX 
+
+        DEFINE TEXTBOX endereco
+               ROW    78
+               COL    150
+               WIDTH  385
+               HEIGHT 22
+               FONTNAME 'Arial'
+               MAXLENGTH 50
+        END TEXTBOX 
+
+        DEFINE COMBOBOX CmbTpPessoa
+               ROW    131
+               COL    680
+               WIDTH  125
+               HEIGHT 100
+               ITEMS {'Fisica','Juridica'}
+               VALUE 1
+               FONTNAME 'Arial'
+               TOOLTIP ''
+        END COMBOBOX  
+
+        DEFINE TEXTBOX Bairro
+               ROW    103
+               COL    150
+               WIDTH  315
+               HEIGHT 22
+               FONTNAME 'Arial'
+               MAXLENGTH 45
+        END TEXTBOX 
+
+        DEFINE LABEL Label_7
+               ROW    180
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Referência Endereço"
+        END LABEL  
+
+        DEFINE TEXTBOX cidade
+               ROW    129
+               COL    150
+               WIDTH  315
+               HEIGHT 22
+               FONTNAME 'Arial'
+               MAXLENGTH 45
+        END TEXTBOX 
+
+        DEFINE LABEL Label_8
+               ROW    205
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Cep"
+        END LABEL  
+
+        DEFINE COMBOBOX Uf
+               ROW    152
+               COL    150
+               WIDTH  75
+               HEIGHT 100
+               ITEMS {"RO","AC","AM","RR","PA","AP","TO","MA","PI","CE","RN","PB","PE","AL","MG","ES","RJ","SP","PR","SC","RS","MS","MT","GO","DF","SE","BA"}
+               VALUE 2
+               FONTNAME 'Arial'
+               TOOLTIP ''
+               SORT .T.
+        END COMBOBOX  
+
+        DEFINE LABEL Label_9
+               ROW    228
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Inscrição Estadual "
+        END LABEL  
+
+        DEFINE LABEL Label_10
+               ROW    253
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Rg "
+        END LABEL  
+
+        DEFINE TEXTBOX Referencia
+               ROW    177
+               COL    150
+               WIDTH  385
+               HEIGHT 22
+               FONTNAME 'Arial'
+               MAXLENGTH 50
+        END TEXTBOX 
+
+        DEFINE TEXTBOX Cep
+               ROW    202
+               COL    150
+               WIDTH  120
+               HEIGHT 22
+               FONTNAME 'Arial'
+               INPUTMASK "99999-999"
+        END TEXTBOX 
+
+        DEFINE TEXTBOX Ie
+               ROW    228
+               COL    150
+               WIDTH  120
+               HEIGHT 22
+               FONTNAME 'Arial'
+        END TEXTBOX 
+
+        DEFINE LABEL Label_11
+               ROW    107
+               COL    550
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Cpf/Cnpj "
+               FONTBOLD .T.
+        END LABEL  
+
+        DEFINE LABEL Label_12
+               ROW    135
+               COL    550
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Tipo Pessoa "
+        END LABEL  
+
+        DEFINE TEXTBOX Rg
+               ROW    253
+               COL    150
+               WIDTH  120
+               HEIGHT 22
+               FONTNAME 'Arial'
+        END TEXTBOX 
+
+        DEFINE LABEL Label_13
+               ROW    318
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Telefone "
+        END LABEL  
+
+        DEFINE TEXTBOX Fone
+               ROW    315
+               COL    150
+               WIDTH  120
+               HEIGHT 22
+               FONTNAME 'Arial'
+               INPUTMASK "(99)99999-9999"
+        END TEXTBOX 
+
+        DEFINE LABEL Label_14
+               ROW    343
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Nome Fantasia "
+        END LABEL  
+
+        DEFINE TEXTBOX fantasia
+               ROW    340
+               COL    150
+               WIDTH  385
+               HEIGHT 24
+               FONTNAME 'Arial'
+               MAXLENGTH 45
+        END TEXTBOX 
+
+        DEFINE LABEL Label_15
+               ROW    367
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Contato "
+        END LABEL  
+
+        DEFINE TEXTBOX contato
+               ROW    364
+               COL    150
+               WIDTH  385
+               HEIGHT 24
+               FONTNAME 'Arial'
+               MAXLENGTH 45
+        END TEXTBOX 
+
+        DEFINE LABEL Label_16
+               ROW    391
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Email "
+        END LABEL  
+
+        DEFINE TEXTBOX email
+               ROW    388
+               COL    150
+               WIDTH  385
+               HEIGHT 24
+               FONTNAME 'Arial'
+        END TEXTBOX 
+
+        DEFINE LABEL Label_17
+               ROW    80
+               COL    550
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Status Cadastro : "
+        END LABEL  
+
+        DEFINE LABEL LblStatus
+               ROW    79
+               COL    680
+               WIDTH  120
+               HEIGHT 24
+               VALUE "                "
+               FONTNAME "Verdana"
+               FONTBOLD .T.
+               FONTCOLOR {0,0,255}
+        END LABEL  
+
+        DEFINE FRAME Frame_2
+               ROW    290
+               COL    2
+               WIDTH  830
+               HEIGHT 130
+               FONTNAME "Verdana"
+               FONTBOLD .T.
+               CAPTION "Contato"
+               BACKCOLOR {230,230,230}
+               FONTCOLOR {0,0,255}
+        END FRAME  
+
+        DEFINE FRAME Frame_1
+               ROW    30
+               COL    2
+               WIDTH  830
+               HEIGHT 257
+               FONTNAME "Verdana"
+               FONTBOLD .T.
+               BACKCOLOR {230,230,230}
+        END FRAME  
+
+    END PAGE 
+
+    PAGE 'Outros' IMAGE 'ic_janela.bmp'
+
+        DEFINE FRAME Frame_3
+               ROW    23
+               COL    2
+               WIDTH  830
+               HEIGHT 145
+               FONTNAME 'Arial'
+               CAPTION "Observação "
+               BACKCOLOR {230,230,230}
+        END FRAME  
+
+        DEFINE EDITBOX Observacao
+               ROW    44
+               COL    20
+               WIDTH  700
+               HEIGHT 120
+               VALUE ''
+               FONTNAME 'Arial'
+               TOOLTIP ''
+        END EDITBOX  
+
+        DEFINE LABEL Label_18
+               ROW    190
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Data Cadastro : "
+        END LABEL  
+
+        DEFINE LABEL Label_19
+               ROW    210
+               COL    20
+               WIDTH  120
+               HEIGHT 24
+               VALUE "Data Bloqueio "
+        END LABEL  
+
+        DEFINE LABEL LbldtCad
+               ROW    190
+               COL    135
+               WIDTH  120
+               HEIGHT 24
+               VALUE "                           "
+               FONTNAME "Verdana"
+               FONTSIZE 8
+               FONTBOLD .T.
+               FONTCOLOR {0,0,255}
+        END LABEL  
+
+        DEFINE LABEL lblDtBloq
+               ROW    210
+               COL    135
+               WIDTH  120
+               HEIGHT 24
+               VALUE "                          "
+               FONTNAME "Verdana"
+               FONTSIZE 8
+               FONTCOLOR {0,0,255}
+        END LABEL  
+
+    END PAGE 
+
+  END TAB 
+
+     DEFINE Button BtnOk
+            ROW    428
+            COL    600
+            WIDTH  65
+            HEIGHT 24
+            CAPTION "Ok"
+            PICTURE "OK.BMP"            
+            ACTION (lOkGrv := GravaFor( lNew ))
+            FONTNAME 'Arial'
+            TOOLTIP ''
+            HANDCURSOR .F.
+     END Button  
+
+     DEFINE Button Button_1
+            ROW    428
+            COL    664
+            WIDTH  85
+            HEIGHT 24
+            CAPTION "Cancelar"
+            PICTURE "cancel.bmp"       
+            ACTION (lokGrv := .f. , FcadFornec.Release , fCadFornec := Nil)
+            FONTNAME 'Arial'
+            TOOLTIP ''
+            HANDCURSOR .F.
+     END Button  
+
+END WINDOW
+
+

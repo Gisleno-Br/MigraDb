@@ -272,6 +272,8 @@ Function xRode()
 
    Main.Cursor := 'Hourglass.Cur'
 
+   fProgress.Cursor := 'Hourglass.Cur'
+
    
 
    aMap := TextToArray( MemoRead(    cArqt1 ) )
@@ -338,8 +340,13 @@ Function xRode()
        
    Next 
 
-   msginfo( 'ok' )
+   msginfo( 'Processo Concluido!' )
 
+   
+   
+		
+	SetWindowCursor( GetFormHandle( 'Main' ) , IDC_ARROW )
+   SetWindowCursor( GetFormHandle( 'fProgress' ) , IDC_ARROW )
 
 
 Return 

@@ -16,6 +16,9 @@ Function Main
         Private cUserDb := 'root'
 
 
+        Private nPercent := 0
+        Private nTotal   := 0
+
               
 
         
@@ -67,20 +70,53 @@ Function Main
 Return
 
 
+Function D1Black(cJan, nP1 , nTot )
+
+	Local hDc
+
+	Local nRow := 0
+	Local nCol := 0
+
+
+	LOCAL Width  := BT_ClientAreaWidth  (cJan)
+	LOCAL Height := BT_ClientAreaHeight (cJan)
+
+   Local nW 
+
+	LOCAL BTstruct
+
+   DEFAULT nP1  := 0   
+   DEFAULT nTot := 0
+
+
+
+   If nP1 > 0 
+
+      nW := Int( ( np1 / nTot) * Width )
+
+      hDC    = BT_CreateDC ( cJan  , BT_HDC_INVALIDCLIENTAREA, @BTstruct)
+      BT_DrawGradientFillVertical (hDC,  nRow  ,  nCol  ,  nW  ,  Height , WHITE , BLACK)
+
+   //	BT_DrawBitmapAlphaBlend (hDC, nRow ,  nCol  , nil, nil, 120 , BT_COPY  , zBitmap)
+
+      BT_DeleteDC ( BTstruct )
+
+   End If 
+
+
+
+
+Return
+
+
+
+
 Function xInit()
 
 
 
-
-     //    fProgress.Col := 5
-        // fProgress.Row := 5
-
-          //HMG_ChangeWindowStyle( fProgress.Handle  , WS_EX_CLIENTEDGE, NIL, .T. )
-
-          
-      HMG_ChangeWindowStyle(fProgress.Handle, NIL, WS_BORDER, .F., .F.)
-
-      //HMG_ChangeWindowStyle( fProgress.Handle  , WS_EX_CLIENTEDGE, NIL, .T. )
+     HMG_ChangeWindowStyle(  fProgress.Handle , NIL, WS_BORDER, .F., .T.)
+     HMG_ChangeWindowStyle(  fProgress.Handle , WS_EX_STATICEDGE, NIL, .T., .T.)
 
 
 
@@ -165,7 +201,7 @@ Function xGetRt1()
      Do Events
 
      
-      HMG_ChangeWindowStyle( hWnd, WS_EX_CLIENTEDGE, NIL, .T. )
+      //HMG_ChangeWindowStyle( hWnd, WS_EX_CLIENTEDGE, NIL, .T. )
 
 
      Main.BtnRun.Enabled := (Len(cArqt1) > 0 ) .And. (  Len(cArqCsv) > 0  )
@@ -293,6 +329,11 @@ Function xRode()
 
        
       Main.LblAndamento.Value := "Processando : " + Alltrim( TRANSFORM(   n1  , "999,999,999" )) + "\" + Alltrim( Transform(  Len(aCsv)  , "999,999,999"   ))
+
+      nTotal   := Len(aCsv) 
+      nPerCent := n1
+
+      BT_ClientAreaInvalidateAll('fProgress')
 
        
    Next 

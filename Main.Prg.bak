@@ -1,0 +1,131 @@
+#include <hmg.ch>
+
+Function Main
+
+        Private cServer := 'LocalHost'
+        Private cUserDb := 'root'
+        
+        Private cPassDb := '123321'
+        Private cBanco := 'sisDb'
+
+
+        Load Window Main
+        Main.Center
+        Main.Activate
+        
+        
+        
+        
+        
+
+Return
+
+
+Function Impx()
+
+ Local oServer := GetConexao()
+ 
+ msginfo('Conectado')
+ 
+ USE zr70301 EXCLUSIVE NEW ALIAS CC2
+
+      dbGoTop()
+      
+      nse1 := 0
+      
+      nSEq := 0
+      
+
+      WHILE !Eof()
+      
+         nse1++
+
+        // cUf     := CC2_EST
+         //cCodIbge := GetCodUf( cUf ) + CC2_CODMUN
+         cMun     := fTiraChar( ZR7_UF )
+         
+         IF (cMun != "AL")
+            DbSkip()
+            LOOP         
+         End If
+         
+         nSeq++
+
+         cQuery := "INSERT INTO Bairros VALUES ('" + StrZero(nSeq,6) +    "','"  + ALLTRIM(fTiraChar(ZR7_BAIRRO))  + "','" + AllTrim( fTiraChar(ZR7_MUN) ) + "','" + AllTrim( ZR7_UF )   + "')"
+         
+         //+ "','"  + AllTrim( cMun )  + "','" + ;
+         //+ Alltrim(Z7_COMP) +   "','" + Alltrim(Z7_BAIRRO) + "')"
+                  
+         main.Label_1.value := fTiraChar(ZR7_BAIRRO)
+         
+         oQuery := oServer:Query(  cQuery )
+         
+         IF oServer:NetErr()
+            MsGInfo( "Error executing Query " + cQuery + ": " + oServer:Error() )
+            EXIT
+         ENDIF
+
+         
+         dbSkip()
+         Do Events
+         //Do Events
+         
+
+      ENDDO
+      
+      oQuery:Destroy()
+
+      dbSelectArea( "CC2" )
+      USE
+
+      msgBox( "Processo completo!" )
+ 
+  
+
+
+Return
+
+
+
+FUNCTION GetConexao()
+
+   LOCAL oServer
+   LOCAL lRet
+   LOCAL oQuery
+
+   oServer := TMySQLServer():New( cServer, cUserDb, cPassDb )
+
+   IF oServer:NetErr()
+      MsGInfo( "Error ao Conectar SQL Server: " + QUEBRA + oServer:Error() )
+      RELEASE Window ALL
+      QUIT
+   ENDIF
+
+   oServer:SelectDB( cBanco )
+
+   IF oServer:NetErr()
+      MsGInfo( "Error ao Conectar Banco " + cBanco + " : " + QUEBRA + oServer:Error() )
+      RELEASE Window ALL
+      QUIT
+   ENDIF
+
+RETURN ( oServer )
+
+FUNCTION fTiraChar( wCampo )
+
+   // // Remover Caracteres Especiais (/,*)
+
+   LOCAL lRet  := .T.
+   LOCAL cStr1 := ''
+   LOCAL i     := 1 //'
+
+   FOR i := 1 TO Len( wCampo )
+      IF SubStr( wCampo, i, 1 ) == "'" .OR. SubStr( wCampo, i, 1 ) == ")" .OR. SubStr( wCampo, i, 1 ) == "(" .OR. SubStr( wCampo, i, 1 ) == "*" .OR. SubStr( wCampo, i, 1 ) == "/"  .OR. SubStr( wCampo, i, 1 ) == "\"  .OR. SubStr( wCampo, i, 1 ) == '%' .OR. SubStr( wCampo, i, 1 ) == "-"
+
+      ELSE
+         cStr1 += SubStr( wCampo, i, 1 )
+      ENDIF
+   NEXT i
+
+   RETURN cStr1
+

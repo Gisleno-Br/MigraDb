@@ -1,0 +1,42 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "harbour-dbg",
+            "request": "launch",
+            "name": "Compilar Debugar SisDbhmg",
+            "program": "${workspaceFolder}\\b.exe",
+            "stopOnEntry": false,
+            "terminalType": "none",   
+            "preLaunchTask": "CompileDebug",   
+            "postDebugTask": "",
+            "workingDir": "${workspaceFolder}",
+            "sourcePaths": 
+                ["${workspaceFolder}" ]
+            
+        }       
+        ,
+        {
+            "type": "harbour-dbg",
+            "request": "launch",
+            "name": "Compilar Release SisDbhmg",
+            "program": "${workspaceFolder}\\ImpBairros.exe",
+            "stopOnEntry": false,
+            "terminalType": "none",   
+            "preLaunchTask": "CompileRelease",   
+            "postDebugTask": "",
+            "workingDir": "${workspaceFolder}/",
+            "sourcePaths": 
+                ["${workspaceFolder}" ]
+            
+        }       
+        
+        
+
+
+
+    ]
+}

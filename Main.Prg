@@ -5,6 +5,10 @@
 #include <fileio.ch>
 #include "directry.ch"
 
+
+
+Declare Window fprogress
+
 Function Main
 
 
@@ -15,9 +19,10 @@ Function Main
               
 
         
+
 	      SET LANGUAGE TO PORTUGUESE
 	      SET CODEPAGE TO PORTUGUESE   
-         
+
    			
        	SET(_SET_DATEFORMAT , "dd/mm/yyyy" )
         
@@ -34,8 +39,14 @@ Function Main
         Private cArqCsv := ''
 
 
+
+
         Load Window Main
         Main.Center
+
+
+         //fProgress
+
 
 
 
@@ -48,9 +59,35 @@ Function Main
      
         
 
+
+
+
         
 
 Return
+
+
+Function xInit()
+
+
+
+
+     //    fProgress.Col := 5
+        // fProgress.Row := 5
+
+          //HMG_ChangeWindowStyle( fProgress.Handle  , WS_EX_CLIENTEDGE, NIL, .T. )
+
+          
+      HMG_ChangeWindowStyle(fProgress.Handle, NIL, WS_BORDER, .F., .F.)
+
+      //HMG_ChangeWindowStyle( fProgress.Handle  , WS_EX_CLIENTEDGE, NIL, .T. )
+
+
+
+          fProgress.Show()
+
+
+Return 
 
 
 Function Impx()
@@ -127,6 +164,10 @@ Function xGetRt1()
 
      Do Events
 
+     
+      HMG_ChangeWindowStyle( hWnd, WS_EX_CLIENTEDGE, NIL, .T. )
+
+
      Main.BtnRun.Enabled := (Len(cArqt1) > 0 ) .And. (  Len(cArqCsv) > 0  )
 
   End If 
@@ -175,12 +216,88 @@ Function xRode()
 
   // HB_SETCODPAGE("PT850")
 //
-   If !MsgYesNo( Hb_AnsiToOem("Confirma Execução da Importação do CSV?"))
+
+   Local aMap := {}
+   Local a1 
+   Local cCampo 
+   Local cTipo 
+   Local nPos
+   Local c1 
+   Local aZ1  := {}
+
+   Local zk 
+
+   Local aMap1 := {}
+   Local aValores := {}
+
+   If !MsgYesNo( Hb_AnsiToOem("Confirma Execução da Importação do CSV?") )
       Return
    End If 
 
    Main.Cursor := 'Hourglass.Cur'
 
+   
+
+   aMap := TextToArray( MemoRead(    cArqt1 ) )
+
+   c1 := ''
+
+   For n1 := 1 To Len(aMap)
+
+      If !Empty(Alltrim(    aMap[n1]  ))
+
+         a1 := hb_ATokens( aMap[n1] , ',' )
+
+         cCampo := a1[1]
+
+         nPos   := Val(a1[2])
+
+         cTipo  := a1[3]
+
+         c1 += ( Alltrim(cCampo)+",")
+
+         Aadd(aMap1 , nPos)
+
+      End If 
+
+   Next
+
+   cVal := ''
+
+
+   aCsv := TextToArray( MemoRead(    cArqCsv  ) )
+
+
+
+   For n1 := 1 To Len(aCsv)
+
+
+      If !Empty(Alltrim(  aCsv[n1] ))
+
+         aZ1  := hb_ATokens( aCsv[n1] , ';' )
+
+         cVal := ''
+
+         For zK := 1 To Len(aMap1)
+
+            cVal += Alltrim(az1[ aMap1[ zk ] ]  ) + ","
+
+         Next
+
+
+         Aadd(aValores , cVal )
+
+         Do Events
+
+       End If 
+
+       
+      Main.LblAndamento.Value := "Processando : " + Alltrim( TRANSFORM(   n1  , "999,999,999" )) + "\" + Alltrim( Transform(  Len(aCsv)  , "999,999,999"   ))
+
+       
+   Next 
+
+   msginfo( 'ok' )
 
 
 

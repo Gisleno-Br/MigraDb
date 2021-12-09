@@ -2,12 +2,12 @@ nome,02,C
 endereco,03,C
 cidade,04,C
 uf,05,C
-contato=06,C
+contato,06,C
 ie,07,C
 tipo,08,C
 rg,09,C
 datanasc,11,D
-referencia12,C
+referencia,12,C
 fone1,13,C
 cep,14,C
 fone2,15,C
@@ -19,7 +19,7 @@ endent,21,C
 baient,22,C
 cident,23,C
 cepent,24,C
-refent,5,C
+refent,25,C
 numero,26,C
 nument,27,C
 sexo,28,C

@@ -1,2 +1,12 @@
 .hbmk/win/mingw64/Main.c
 .hbmk/win/mingw64/Main.o
+_hmg_resconfig.h
+_temp.o
+_temp.rc
+b.exe
+error.log
+impBairros.exe
+windres.log
+.hbmk/win/mingw64/Main.c
+.hbmk/win/mingw64/Main.o
+ErrorLog.Htm

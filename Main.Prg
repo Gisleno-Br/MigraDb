@@ -7,22 +7,19 @@
 
 Function Main
 
+
         Private cServer := 'LocalHost'
         Private cUserDb := 'root'
 
 
-        
-        
+              
+
         
 	      SET LANGUAGE TO PORTUGUESE
 	      SET CODEPAGE TO PORTUGUESE   
+         
    			
        	SET(_SET_DATEFORMAT , "dd/mm/yyyy" )
-
-
-
-
-
         
       	HB_SetCodePage( "PT850" )
       	hb_langSelect( "PT" )
@@ -42,19 +39,13 @@ Function Main
 
 
 
-
-
         Main.BtnRun.Enabled := .f.
 
 
 
 
         Main.Activate
-        
-        
-        
-        
-        
+     
         
 
         
@@ -182,8 +173,8 @@ REturn
 Function xRode()
 
 
-   HB_SETCODPAGE("PT850")
-
+  // HB_SETCODPAGE("PT850")
+//
    If !MsgYesNo( Hb_AnsiToOem("Confirma Execução da Importação do CSV?"))
       Return
    End If 

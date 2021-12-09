@@ -20,6 +20,8 @@ Function Main
 
 
 
+
+
         
       	HB_SetCodePage( "PT850" )
       	hb_langSelect( "PT" )

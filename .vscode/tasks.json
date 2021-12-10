@@ -57,7 +57,30 @@
 			"label": "echo",
 			"type": "shell",
 			"command": "echo ${workspaceFolder}"
+		  }  , 
+
+
+		  {
+			"label": "IdentarHarbour"	,
+			"type": "shell",			
+			"command": "${workspaceFolder}\\HbFormat.Exe HbFormat.Ini ${file}",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			},
+			"problemMatcher": []
+		},
+
+		{
+			"label": "echo",
+			"type": "shell",
+			"command": "${workspaceFolder}\\HbFormat ${File}" 
 		  }
+
 
 
 

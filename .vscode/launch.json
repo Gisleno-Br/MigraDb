@@ -19,6 +19,7 @@
             
         }       
         ,
+        
         {
             "type": "harbour-dbg",
             "request": "launch",
@@ -27,6 +28,22 @@
             "stopOnEntry": false,
             "terminalType": "none",   
             "preLaunchTask": "CompileRelease",   
+            "postDebugTask": "",
+            "workingDir": "${workspaceFolder}/",
+            "sourcePaths": 
+                ["${workspaceFolder}" ]
+            
+        }       
+
+
+        {
+            "type": "harbour-dbg",
+            "request": "launch",
+            "name": "Identar Harbour",
+            "program": "${workspaceFolder}\\HbFormat.Exe",
+            "stopOnEntry": true,
+            "terminalType": "none",   
+            "preLaunchTask": "IdentarHarbour",   
             "postDebugTask": "",
             "workingDir": "${workspaceFolder}/",
             "sourcePaths": 

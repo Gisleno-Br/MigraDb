@@ -82,20 +82,22 @@ Function D1Black(cJan, nP1 , nTot )
    DEFAULT nP1  := 0   
    DEFAULT nTot := 0
 
+   hDC    = BT_CreateDC ( cJan  , BT_HDC_INVALIDCLIENTAREA, @BTstruct)
+
 
 
    If nP1 > 0 
 
       nW := Int( ( np1 / nTot) * Width )
 
-      hDC    = BT_CreateDC ( cJan  , BT_HDC_INVALIDCLIENTAREA, @BTstruct)
+   
       BT_DrawGradientFillVertical (hDC,  nRow  ,  nCol  ,  nW  ,  Height , WHITE , BLACK)
 
-   //	BT_DrawBitmapAlphaBlend (hDC, nRow ,  nCol  , nil, nil, 120 , BT_COPY  , zBitmap)
-
-      BT_DeleteDC ( BTstruct )
-
+   Else       
+      BT_DrawGradientFillVertical (hDC,  nRow  ,  nCol  ,  Width  ,  Height , {192,192,192} , {192,192,192})
    End If 
+
+   BT_DeleteDC ( BTstruct )
 
 
 
@@ -116,6 +118,9 @@ Function xInit()
    fProgress.Height := 25
 
    fProgress.Show()
+
+   
+   BT_ClientAreaInvalidateAll('fProgress')
 
 
 Return 
@@ -252,6 +257,7 @@ Function xRode()
    Local nPos
    Local c1 
    Local aZ1  := {}
+   Local cData 
 
    Local zk 
 
@@ -286,7 +292,7 @@ Function xRode()
 
          c1 += ( Alltrim(cCampo)+",")
 
-         Aadd(aMap1 , nPos)
+         Aadd(aMap1 , { nPos , cTipo , cCampo }  )
 
       End If 
 
@@ -310,12 +316,28 @@ Function xRode()
 
          For zK := 1 To Len(aMap1)
 
-            cVal += Alltrim(az1[ aMap1[ zk ] ]  ) + ","
+            cTipo := aMap1[ zk ] [2]
+
+            If at( '"' , az1[ aMap1[ zk ][1]   ] ) == 0
+
+               If cTipo = 'D'
+                  cData        := Left(Alltrim(az1[ aMap1[ zk ] [1]   ] ) ,4) + "-" + 
+                  Substr(  Alltrim(az1[ aMap1[ zk ] [1]   ] ) , 5 ,2  ) + "-" + 
+                  Right(Alltrim(az1[ aMap1[ zk ] [1]   ] ) ,2)
+
+
+                  cVal += '"'  +  cData +  '"'  +  ","
+               End If 
+
+               If cTipo = 'C'
+                  cVal += '"'  + Alltrim(az1[ aMap1[ zk ] [1]   ] ) +  '"'  +  ","
+               End If    
+
+            Else            
+               cVal += (  '"'   +  Alltrim(xRemoveAs(az1[ aMap1[ zk ] [1]   ]  )) +   '"'  +  ",")
+            End If    
 
          Next
-
-
-
 
          Aadd(aValores , cVal )
 
@@ -334,9 +356,15 @@ Function xRode()
        
    Next 
 
-   msginfo( 'Processo Concluido!' )
+   MsgInfo( 'Processo Concluido!' )
+
+
+
+   nTotal   := 0
+   nPerCent := 0   
 
    
+   BT_ClientAreaInvalidateAll('fProgress')
    
 		
 	SetWindowCursor( GetFormHandle( 'Main' ) , IDC_ARROW )
@@ -344,6 +372,15 @@ Function xRode()
 
 
 Return 
+
+
+Function xRemoveAs(   cCar   )
+
+  Local cStr1 :=  Alltrim(Right( cCar , Len( cCar ) - 1))             
+  Local cStr2 := Left(cStr1 , Len(cStr1) - 1)
+
+
+Return cStr2 
 
 
 FUNCTION GetConexao()
@@ -385,7 +422,7 @@ FUNCTION fTiraChar( wCampo )
    LOCAL i     := 1 //'
 
    FOR i := 1 TO Len( wCampo )
-      IF SubStr( wCampo, i, 1 ) == "'" .OR. SubStr( wCampo, i, 1 ) == ")" .OR. SubStr( wCampo, i, 1 ) == "(" .OR. SubStr( wCampo, i, 1 ) == "*" .OR. SubStr( wCampo, i, 1 ) == "/"  .OR. SubStr( wCampo, i, 1 ) == "\"  .OR. SubStr( wCampo, i, 1 ) == '%' .OR. SubStr( wCampo, i, 1 ) == "-"
+      IF SubStr( wCampo, i, 1 ) == "'" .OR. SubStr( wCampo, i, 1 ) == '"'  .or. SubStr( wCampo, i, 1 ) == ")" .OR. SubStr( wCampo, i, 1 ) == "(" .OR. SubStr( wCampo, i, 1 ) == "*" .OR. SubStr( wCampo, i, 1 ) == "/"  .OR. SubStr( wCampo, i, 1 ) == "\"  .OR. SubStr( wCampo, i, 1 ) == '%' .OR. SubStr( wCampo, i, 1 ) == "-"
 
       ELSE
          cStr1 += SubStr( wCampo, i, 1 )
@@ -393,4 +430,7 @@ FUNCTION fTiraChar( wCampo )
    NEXT i
 
    RETURN cStr1
+
+
+
 

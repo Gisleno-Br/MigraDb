@@ -45,12 +45,11 @@ Function Main
 
 
         Load Window Main
+
         Main.Center
 
 
-         //fProgress
-
-
+        
 
 
         Main.BtnRun.Enabled := .f.
@@ -60,11 +59,6 @@ Function Main
 
         Main.Activate
      
-        
-
-
-
-
         
 
 Return
@@ -115,12 +109,13 @@ Function xInit()
 
 
 
-     HMG_ChangeWindowStyle(  fProgress.Handle , NIL, WS_BORDER, .F., .T.)
-     HMG_ChangeWindowStyle(  fProgress.Handle , WS_EX_STATICEDGE, NIL, .T., .T.)
+   HMG_ChangeWindowStyle(  fProgress.Handle , NIL, WS_BORDER, .F., .T.)
+   HMG_ChangeWindowStyle(  fProgress.Handle , WS_EX_STATICEDGE, NIL, .T., .T.)
 
 
+   fProgress.Height := 25
 
-          fProgress.Show()
+   fProgress.Show()
 
 
 Return 
@@ -199,10 +194,7 @@ Function xGetRt1()
      SetProperty("Main" , "LstMap1" , "Enabled" , .f.)
 
      Do Events
-
      
-      //HMG_ChangeWindowStyle( hWnd, WS_EX_CLIENTEDGE, NIL, .T. )
-
 
      Main.BtnRun.Enabled := (Len(cArqt1) > 0 ) .And. (  Len(cArqCsv) > 0  )
 
@@ -321,6 +313,8 @@ Function xRode()
             cVal += Alltrim(az1[ aMap1[ zk ] ]  ) + ","
 
          Next
+
+
 
 
          Aadd(aValores , cVal )

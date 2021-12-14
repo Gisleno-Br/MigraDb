@@ -1,9 +1,25 @@
 #include <hmg.ch>
+#include "hbthread.ch"
+
+#define QUEBRA Chr(13)+Chr(10)
 
 
 #include <set.ch>
 #include <fileio.ch>
 #include "directry.ch"
+
+
+
+STATIC nPercent := 0
+STATIC nTotal   := 0
+
+Static aThread := Nil
+
+Static oServerDb := Nil
+
+STATIC lTermino := .f. 
+
+
 
 
 
@@ -14,9 +30,17 @@ FUNCTION Main
    PRIVATE cServer := 'LocalHost'
    PRIVATE cUserDb := 'root'
 
+   Private cDataBase := 'SisDb'
 
-   PRIVATE nPercent := 0
-   PRIVATE nTotal   := 0
+
+
+
+   Private aThread  := 0
+   Private aThread1 := 0
+
+   Private lEfeito := .f. 
+
+   Private hBitMap := Nil 
 
    SET LANGUAGE TO PORTUGUESE
    SET CODEPAGE TO PORTUGUESE
@@ -43,21 +67,72 @@ FUNCTION Main
 
    Main.Center
 
-
-
-
-
    Main .BtnRun. Enabled := .F.
-
-
-
 
    Main.Activate
 
 RETURN
 
 
-FUNCTION D1Black( cJan, nP1, nTot )
+Function xLimpa()
+
+   aThread := NIL
+
+   Main .LblArq1. Value := ""
+
+   Main .LblArqCsv. Value := ""
+
+   Main.LblQtCampos.Value := ""
+
+   Main .LstMap1. DeleteAllItems()
+
+   Main.LblAndamento.Value := "   "
+
+Return
+
+
+Function xDoPaint(  cJan , lEffect )
+
+   LOCAL hDc
+
+   LOCAL nRow := 0
+   LOCAL nCol := 0
+
+
+   LOCAL Width  := BT_ClientAreaWidth  ( cJan )
+   LOCAL Height := BT_ClientAreaHeight ( cJan )
+
+   LOCAL nW
+
+   LOCAL BTstruct
+
+
+   
+   hDC    = BT_CreateDC ( cJan, BT_HDC_INVALIDCLIENTAREA, @BTstruct )
+
+
+   If lEffect 
+
+      
+		BT_DrawGradientFillVertical (hDC,  0  , 0  ,  Width,  Height , BLACK , BLACK)              //
+
+      BT_DrawBitmapAlphaBlend (hDC, 0 ,  0  , nil , nil   , 120 , BT_COPY  , hBitmap)      
+		BT_DeleteDC ( BTstruct )
+
+   Else 
+
+
+
+   End If 
+
+
+
+
+
+Return 
+
+
+Function D1Black( cJan, nP1, nTot )
 
    LOCAL hDc
 
@@ -78,17 +153,17 @@ FUNCTION D1Black( cJan, nP1, nTot )
    hDC    = BT_CreateDC ( cJan, BT_HDC_INVALIDCLIENTAREA, @BTstruct )
 
 
-
-   IF nP1 > 0
+   
+   If ( nP1 > 0 )
 
       nW := Int( ( np1 / nTot ) * Width )
 
 
       BT_DrawGradientFillVertical ( hDC,  nRow,  nCol,  nW,  Height, WHITE, BLACK )
 
-   ELSE
+   Else
       BT_DrawGradientFillVertical ( hDC,  nRow,  nCol,  Width,  Height, { 192, 192, 192 }, { 192, 192, 192 } )
-   END IF
+   End If
 
    BT_DeleteDC ( BTstruct )
 
@@ -98,6 +173,8 @@ RETURN
 
 
 FUNCTION xInit()
+
+   oServerDb := GetConexao()
 
    HMG_ChangeWindowStyle(  fProgress.Handle, NIL, WS_BORDER, .F., .T. )
    HMG_ChangeWindowStyle(  fProgress.Handle, WS_EX_STATICEDGE, NIL, .T., .T. )
@@ -117,16 +194,14 @@ FUNCTION Impx()
 
    LOCAL oServer := GetConexao()
 
-   msginfo( 'Conectado' )
-
-
+   MsgInfo( 'Conectado' )
 
    aTexto1 := MemoRead( "Clientes.Csv" )
 
    aMatriz := TextToArray( aTexto1 )
 
 
-   FOR n1 := 1 TO Len( aMatriz ) - 1
+   For n1 := 1 TO Len( aMatriz ) - 1
 
       cLine := aMatriz[ n1 ]
 
@@ -134,7 +209,7 @@ FUNCTION Impx()
       aZ1 := hb_ATokens(  cLine, ";" )
 
 
-   NEXT
+   Next
 
 
 
@@ -158,9 +233,7 @@ FUNCTION xGetRt1()
    LOCAL n1
 
 
-
-
-   IF !Empty( AllTrim( cArq1 ) )
+   If !Empty( AllTrim( cArq1 ) )
       cArqT1 := cArq1
 
       Main .LblArq1. Value := cArqT1
@@ -177,11 +250,11 @@ FUNCTION xGetRt1()
 
       // Main.LstMap1.Item := aMatriz
 
-      FOR n1 := 1 TO Len( aMatriz )
-         IF !Empty( AllTrim(  aMatriz[ n1 ] ) )
+      For n1 := 1 TO Len( aMatriz )
+         If !Empty( AllTrim(  aMatriz[ n1 ] ) )
             Main .LstMap1. AddItem(  aMatriz[ n1 ]  )
-         END IF
-      NEXT
+         End If
+      Next
 
 
       Main .LblQtCampos. Value := AllTrim( Str( Len(  aMatriz   ) ) ) + ' Campos '
@@ -195,7 +268,7 @@ FUNCTION xGetRt1()
 
       Main .BtnRun. Enabled := ( Len( cArqt1 ) > 0 ) .AND. (  Len( cArqCsv ) > 0  )
 
-   END IF
+   End If
 
 RETURN
 
@@ -210,7 +283,7 @@ FUNCTION xGetCSV()
    LOCAL aSub1 := {}
 
 
-   IF !Empty( AllTrim( cArq1 ) )
+   If !Empty( AllTrim( cArq1 ) )
       cArqCsv := cArq1
 
       Main .LblArqCSV. Value := cArqCsv
@@ -227,12 +300,73 @@ FUNCTION xGetCSV()
 
       Main .BtnRun. Enabled := ( Len( cArqt1 ) > 0 ) .AND. (  Len( cArqCsv ) > 0  )
 
-   END IF
+   End If
 
 RETURN
 
 
-FUNCTION xRode()
+
+
+Function xStartProc()
+
+   Local aM1 := {}
+
+   If !MsgYesNo( hb_ANSIToOEM( "Confirma Execução da Importação do CSV?" ) )
+      Return
+   End If
+
+   
+	hBitMap := BT_BitmapCaptureWindow ( 'Main' , 31 , 5 , Main.Width , Main.Height  )
+
+
+
+
+   
+	BT_BitmapSaveFile (hBitMap  , "hBit2.bmp")
+
+   lEfeito := .t. 
+
+   aM1 :=  SetWindowControlsVisible('Main' , .f.   )
+
+   BT_ClientAreaInvalidateAll('Main')
+
+
+   aThread  := hb_threadStart( HB_THREAD_INHERIT_PUBLIC, @xRode(), cArqT1, cArqCSV )
+
+   // msginfo('obj Lançado')
+
+   While !lTermino 
+         Do Events 
+   Enddo 
+
+
+   hb_threadDetach( aThread )   // close thread handle
+   hb_threadQuitRequest( aThread )   //
+
+   
+   nTotal   := 0
+   nPerCent := 0
+
+
+   BT_ClientAreaInvalidateAll( 'fProgress' )
+
+
+   xLimpa()
+
+   Do Events 
+   
+   MsgInfo( 'Processo Concluido!' )
+
+   lEfeito := .f. 
+
+
+REturn
+
+
+
+
+
+FUNCTION xRode( cArqT12, cFileCSV  )
 
    // HB_SETCODPAGE("PT850")
 //
@@ -253,27 +387,20 @@ FUNCTION xRode()
    LOCAL aMap1 := {}
    LOCAL aValores := {}
 
-   IF !MsgYesNo( hb_ANSIToOEM( "Confirma Execução da Importação do CSV?" ) )
-      RETURN
-   END IF
 
-   Main.CURSOR := 'Hourglass.Cur'
+   // Main.CURSOR := 'Hourglass.Cur'
 
    fProgress.CURSOR := 'Hourglass.Cur'
 
-
-
-
-
-   aMap := TextToArray( MemoRead(    cArqt1 ) )
+   aMap := TextToArray( MemoRead(    cArqt12 ) )
 
    c1 := ''
 
 
 
-   FOR n1 := 1 TO Len( aMap )
+   For n1 := 1 TO Len( aMap )
 
-      IF !Empty( AllTrim(    aMap[ n1 ]  ) )
+      If !Empty( AllTrim(    aMap[ n1 ]  ) )
 
          a1 := hb_ATokens( aMap[ n1 ], ',' )
 
@@ -287,7 +414,7 @@ FUNCTION xRode()
 
          AAdd( aMap1, { nPos, cTipo, cCampo }  )
 
-      END IF
+      End If
 
    Next
 
@@ -297,14 +424,14 @@ FUNCTION xRode()
    cVal := ''
 
 
-   aCsv := TextToArray( MemoRead(    cArqCsv  ) )
+   aCsv := TextToArray( MemoRead(    cFileCSV  ) )
 
 
 
-   FOR n1 := 1 TO Len( aCsv )
+   For n1 := 1 TO Len( aCsv )
 
 
-      IF !Empty( AllTrim(  aCsv[ n1 ] ) )
+      If !Empty( AllTrim(  aCsv[ n1 ] ) )
 
          aZ1  := hb_ATokens( aCsv[ n1 ], ';' )
 
@@ -314,9 +441,9 @@ FUNCTION xRode()
 
             cTipo := aMap1[ zk ][ 2 ]
 
-            IF At( '"', az1[ aMap1[ zk ][ 1 ]   ] ) == 0
+            If At( '"', az1[ aMap1[ zk ][ 1 ]   ] ) == 0
 
-               IF cTipo = 'D'
+               If cTipo = 'D'
                   cData        := Left( AllTrim( az1[ aMap1[ zk ][ 1 ]   ] ), 4 ) + "-" + ;
                      SubStr(  AllTrim( az1[ aMap1[ zk ][ 1 ]   ] ), 5, 2  ) + "-" + ;
                      Right( AllTrim( az1[ aMap1[ zk ][ 1 ]   ] ), 2 )
@@ -324,22 +451,22 @@ FUNCTION xRode()
 
                   cVal += '"'  +  cData +  '"'  +  ","
 
-               END IF
+               End If
 
 
-               IF cTipo = 'N'
+               If cTipo = 'N'
 
-               END IF
+               End If
 
-               IF cTipo = 'C'
+               If cTipo = 'C'
                   cVal += '"'  + AllTrim( az1[ aMap1[ zk ][ 1 ]   ] ) +  '"'  +  ","
-               END IF
+               End If
 
-            ELSE
+            Else
                cVal += (  '"'   +  AllTrim( xRemoveAs( az1[ aMap1[ zk ][ 1 ]   ]  ) ) +   '"'  +  "," )
-            END IF
+            End If
 
-         NEXT
+         Next
 
          AAdd( aValores, Left( cVal, Len( cVal )  )    )
          // Do Events
@@ -350,32 +477,32 @@ FUNCTION xRode()
          cSql := "Insert Into " + AllTrim(  Main .Tabela. Value ) +  "(codigo," + Left( c1, Len( c1 ) - 1 )  + ") Values (" + QuotedStr( StrZero( nSeq, 6 ) ) + "," + ;
             Left( cVal, Len( cVal ) - 1 )  + ")"
 
-      END IF
+      End If
 
 
       Main .LblAndamento. Value := "Processando : " + AllTrim( Transform(   n1, "999,999,999" ) ) + "\" + AllTrim( Transform(  Len( aCsv ), "999,999,999"   ) )
+
 
       nTotal   := Len( aCsv )
       nPerCent := n1
 
       BT_ClientAreaInvalidateAll( 'fProgress' )
 
-
-   NEXT
-
-   MsgInfo( 'Processo Concluido!' )
+      Do Events
 
 
 
-   nTotal   := 0
-   nPerCent := 0
+   Next
+
+   lTermino := .t.
 
 
-   BT_ClientAreaInvalidateAll( 'fProgress' )
+
+   
 
 
-   SetWindowCursor( GetFormHandle( 'Main' ), IDC_ARROW )
-   SetWindowCursor( GetFormHandle( 'fProgress' ), IDC_ARROW )
+   // SetWindowCursor( GetFormHandle( 'Main' ), IDC_ARROW )
+   // SetWindowCursor( GetFormHandle( 'fProgress' ), IDC_ARROW )
 
 RETURN
 
@@ -388,6 +515,7 @@ FUNCTION xRemoveAs(   cCar   )
 RETURN cStr2
 
 
+
 FUNCTION GetConexao()
 
    LOCAL oServer
@@ -396,25 +524,31 @@ FUNCTION GetConexao()
 
    oServer := TMySQLServer():New( cServer, cUserDb, cPassDb )
 
-   IF oServer:NetErr()
+   If oServer:NetErr()
       MsGInfo( "Error ao Conectar SQL Server: " + QUEBRA + oServer:Error() )
       RELEASE Window ALL
       QUIT
-   ENDIF
+   End If
 
-   oServer:SelectDB( cBanco )
+   oServer:SelectDB( cDataBase )
 
-   IF oServer:NetErr()
+   If oServer:NetErr()
       MsGInfo( "Error ao Conectar Banco " + cBanco + " : " + QUEBRA + oServer:Error() )
       RELEASE Window ALL
       QUIT
-   ENDIF
+   End If
+
+   Main .StatusBar. Item( 1 ) := 'Conectado em ' + cServer
+
+   Main .StatusBar. Item( 2 ) := 'Banco de Dados : ' + cDataBase
 
 RETURN ( oServer )
 
 
 STATIC FUNCTION TextToArray( cString )
 RETURN hb_ATokens( StrTran( cString, Chr( 13 ) ), Chr( 10 ) )
+
+
 
 
 
@@ -426,16 +560,69 @@ FUNCTION fTiraChar( wCampo )
    LOCAL cStr1 := ''
    LOCAL i     := 1 // '
 
-   FOR i := 1 TO Len( wCampo )
-      IF SubStr( wCampo, i, 1 ) == "'" .OR. SubStr( wCampo, i, 1 ) == '"'  .OR. SubStr( wCampo, i, 1 ) == ")" .OR. SubStr( wCampo, i, 1 ) == "(" .OR. SubStr( wCampo, i, 1 ) == "*" .OR. SubStr( wCampo, i, 1 ) == "/"  .OR. SubStr( wCampo, i, 1 ) == "\"  .OR. SubStr( wCampo, i, 1 ) == '%' .OR. SubStr( wCampo, i, 1 ) == "-"
+   For i := 1 TO Len( wCampo )
+      If  SubStr( wCampo, i, 1 ) == "'" .OR. SubStr( wCampo, i, 1 ) == '"'  .OR. SubStr( wCampo, i, 1 ) == ")" .OR. SubStr( wCampo, i, 1 ) == "(" .OR. SubStr( wCampo, i, 1 ) == "*" .OR. SubStr( wCampo, i, 1 ) == "/"  .OR. SubStr( wCampo, i, 1 ) == "\"  .OR. SubStr( wCampo, i, 1 ) == '%' .OR. SubStr( wCampo, i, 1 ) == "-"
 
-      ELSE
+      Else
          cStr1 += SubStr( wCampo, i, 1 )
-      ENDIF
-   NEXT i
+      End If
+   Next i
 
-RETURN cStr1
+Return cStr1
+
 
 
 FUNCTION QuotedStr( cVar )
-RETURN '"' + cVar + '"'
+Return '"' + cVar + '"'
+
+function SetWindowControlsVisible(cForm , lVisible , aMVisible , lShow  )
+
+	Local aControlList := {}
+	Local i        := 0
+	Local cCompo   := ''
+	Local aM1      := {}
+	Local lVisi2 := .f.
+	Local nIndice := 0
+
+	Default aMVisible := {}
+	Default lShow     := .f. 
+
+
+	//sysWait(.1)
+
+
+	For i := 1 to Len(_HMG_SYSDATA[4])
+		If _HMG_SYSDATA[4,i] == GetFormHandle(cForm)
+			If len(alltrim(_HMG_SYSDATA [  2,i])) > 0
+
+				lVisi2 := GetProperty( cForm , _HMG_SYSDATA [  2,i] , "Visible"  )
+
+				If lVisible
+
+					nIndice := Ascan( aMVisible , {|a,b| (a[1] == cForm) .And. (a[2] == _HMG_SYSDATA [  2,i] )  }  )
+
+					If (Len(aMVisible) > 0) .And. (nIndice > 0)
+						Setproperty( cForm , _HMG_SYSDATA [  2,i] , "Visible" , aMVisible[nIndice][3] )
+
+						If (lShow) .And. (aMVisible[nIndice][3] )
+							DoMethod( cForm ,   _HMG_SYSDATA [  2,i] , "Show" )
+						End If 
+
+					End If
+
+				Else
+					Aadd(aM1 , {   cForm , _HMG_SYSDATA [  2,i],  lVisi2 } )
+					Setproperty( cForm , _HMG_SYSDATA [  2,i] , "Visible" , lVisible )
+				End If
+
+				cCompo += (cForm + ' ' +  _HMG_SYSDATA [  2,i] )  + QUEBRA
+
+			End If
+		End If
+	Next i
+
+	hb_memowrit('compo1.txt' , cCompo)
+
+
+
+Return aM1

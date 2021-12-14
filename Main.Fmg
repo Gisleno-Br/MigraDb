@@ -39,10 +39,10 @@ DEFINE WINDOW TEMPLATE AT 290 , 511 WIDTH 839 HEIGHT 554 VIRTUAL WIDTH Nil VIRTU
     END BUTTON
 
     DEFINE LABEL Label_1
-        ROW    140
+        ROW    138
         COL    60
         WIDTH  240
-        HEIGHT 24
+        HEIGHT 20
         VALUE "Mapeamentos"
         FONTNAME "Arial"
         FONTSIZE 9

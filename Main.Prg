@@ -88,6 +88,14 @@ Function xLimpa()
 
    Main.LblAndamento.Value := "   "
 
+   Main.LblQtLinhas.Value := "       "
+
+   //Main.BtnRun.Visible := .f. 
+
+   SetProperty("Main",  "BtnRun" , "Enabled" , .f. )
+
+   DoMethod("fProgress" , "Hide")
+
 Return
 
 
@@ -182,10 +190,16 @@ FUNCTION xInit()
 
    fProgress.Height := 25
 
-   fProgress.Show()
+   //fProgress.Show()
 
 
-   BT_ClientAreaInvalidateAll( 'fProgress' )
+   
+   SetProperty("fProgress",  "Visible"  , .f. )
+
+   DoMethod( "fProgress","Hide" )
+
+
+   //BT_ClientAreaInvalidateAll( 'fProgress' )
 
 RETURN
 
@@ -316,12 +330,14 @@ Function xStartProc()
    End If
 
    
+   
+   DoMethod( "fProgress","Show" )
+
+   
 	hBitMap := BT_BitmapCaptureWindow ( 'Main' , 31 , 5 , Main.Width , Main.Height  )
 
 
-
-
-   
+  
 	BT_BitmapSaveFile (hBitMap  , "hBit2.bmp")
 
    lEfeito := .t. 
@@ -351,6 +367,7 @@ Function xStartProc()
    BT_ClientAreaInvalidateAll( 'fProgress' )
 
 
+
    xLimpa()
 
    Do Events 
@@ -358,6 +375,13 @@ Function xStartProc()
    MsgInfo( 'Processo Concluido!' )
 
    lEfeito := .f. 
+
+
+   
+   BT_ClientAreaInvalidateAll( 'Main' )
+
+   
+    SetWindowControlsVisible('Main' , .t.  , aM1 , .t.  )
 
 
 REturn

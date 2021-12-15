@@ -17,7 +17,8 @@ Static aThread := Nil
 
 Static oServerDb := Nil
 
-STATIC lTermino := .f. 
+STATIC lTermino := .f.
+
 
 
 
@@ -38,9 +39,12 @@ FUNCTION Main
    Private aThread  := 0
    Private aThread1 := 0
 
-   Private lEfeito := .f. 
+   Private lEfeito := .f.
 
-   Private hBitMap := Nil 
+   Private hBitMap := Nil
+
+   Private nContador := 0
+
 
    SET LANGUAGE TO PORTUGUESE
    SET CODEPAGE TO PORTUGUESE
@@ -82,24 +86,24 @@ Function xLimpa()
 
    Main .LblArqCsv. Value := ""
 
-   Main.LblQtCampos.Value := ""
+   Main .LblQtCampos. Value := ""
 
    Main .LstMap1. DeleteAllItems()
 
-   Main.LblAndamento.Value := "   "
+   Main .LblAndamento. Value := "   "
 
-   Main.LblQtLinhas.Value := "       "
+   Main .LblQtLinhas. Value := "       "
 
-   //Main.BtnRun.Visible := .f. 
+   // Main.BtnRun.Visible := .f.
 
-   SetProperty("Main",  "BtnRun" , "Enabled" , .f. )
+   SetProperty( "Main",  "BtnRun", "Enabled", .f. )
 
-   DoMethod("fProgress" , "Hide")
+   DoMethod( "fProgress", "Hide" )
 
 Return
 
 
-Function xDoPaint(  cJan , lEffect )
+Function xDoPaint(  cJan, lEffect )
 
    LOCAL hDc
 
@@ -114,30 +118,24 @@ Function xDoPaint(  cJan , lEffect )
 
    LOCAL BTstruct
 
-
-   
    hDC    = BT_CreateDC ( cJan, BT_HDC_INVALIDCLIENTAREA, @BTstruct )
 
 
-   If lEffect 
-
-      
-		BT_DrawGradientFillVertical (hDC,  0  , 0  ,  Width,  Height , BLACK , BLACK)              //
-
-      BT_DrawBitmapAlphaBlend (hDC, 0 ,  0  , nil , nil   , 120 , BT_COPY  , hBitmap)      
-		BT_DeleteDC ( BTstruct )
-
-   Else 
+   If lEffect
 
 
+      BT_DrawGradientFillVertical ( hDC,  0, 0,  Width,  Height, BLACK, BLACK )              //
 
-   End If 
+      BT_DrawBitmapAlphaBlend ( hDC, 0,  0, nil, nil, 120, BT_COPY, hBitmap )
+      BT_DeleteDC ( BTstruct )
+
+   Else
 
 
 
+   End If
 
-
-Return 
+Return
 
 
 Function D1Black( cJan, nP1, nTot )
@@ -147,6 +145,8 @@ Function D1Black( cJan, nP1, nTot )
    LOCAL nRow := 0
    LOCAL nCol := 0
 
+   Local hBit10
+
 
    LOCAL Width  := BT_ClientAreaWidth  ( cJan )
    LOCAL Height := BT_ClientAreaHeight ( cJan )
@@ -155,23 +155,32 @@ Function D1Black( cJan, nP1, nTot )
 
    LOCAL BTstruct
 
+   // Local nTot
+
    DEFAULT nP1  := 0
    DEFAULT nTot := 0
 
+
    hDC    = BT_CreateDC ( cJan, BT_HDC_INVALIDCLIENTAREA, @BTstruct )
 
+   hBit10 := BT_BitmapLoadFile ( 'Animacao\a' + Alltrim( Str(  nP1 ) ) + '.png' )
 
-   
+
    If ( nP1 > 0 )
 
-      nW := Int( ( np1 / nTot ) * Width )
+      //nW := Int( ( np1 / nTot ) * Width )
 
 
-      BT_DrawGradientFillVertical ( hDC,  nRow,  nCol,  nW,  Height, WHITE, BLACK )
+
+      BT_DrawBitmap ( hDC,   0,  0, 200, 200, BT_STRETCH, hBit10 )
+
+
+      // BT_DrawGradientFillVertical ( hDC,  nRow,  nCol,  nW,  Height, WHITE, BLACK )
 
    Else
-      BT_DrawGradientFillVertical ( hDC,  nRow,  nCol,  Width,  Height, { 192, 192, 192 }, { 192, 192, 192 } )
+       BT_DrawGradientFillVertical ( hDC,  nRow,  nCol,  Width,  Height, { 192, 192, 192 }, { 192, 192, 192 } )
    End If
+
 
    BT_DeleteDC ( BTstruct )
 
@@ -188,18 +197,20 @@ FUNCTION xInit()
    HMG_ChangeWindowStyle(  fProgress.Handle, WS_EX_STATICEDGE, NIL, .T., .T. )
 
 
-   fProgress.Height := 25
+   fProgress.Height := 240
 
-   //fProgress.Show()
+   fProgress.width := 240
 
-
-   
-   SetProperty("fProgress",  "Visible"  , .f. )
-
-   DoMethod( "fProgress","Hide" )
+   // fProgress.Show()
 
 
-   //BT_ClientAreaInvalidateAll( 'fProgress' )
+
+   SetProperty( "fProgress",  "Visible", .f. )
+
+   DoMethod( "fProgress", "Hide" )
+
+
+   // BT_ClientAreaInvalidateAll( 'fProgress' )
 
 RETURN
 
@@ -329,37 +340,47 @@ Function xStartProc()
       Return
    End If
 
-   
-   
-   DoMethod( "fProgress","Show" )
-
-   
-	hBitMap := BT_BitmapCaptureWindow ( 'Main' , 31 , 5 , Main.Width , Main.Height  )
 
 
-  
-	BT_BitmapSaveFile (hBitMap  , "hBit2.bmp")
+   DoMethod( "fProgress", "Show" )
 
-   lEfeito := .t. 
 
-   aM1 :=  SetWindowControlsVisible('Main' , .f.   )
+   hBitMap := BT_BitmapCaptureWindow ( 'Main', 31, 5, Main.Width, Main.Height  )
 
-   BT_ClientAreaInvalidateAll('Main')
+
+
+   BT_BitmapSaveFile ( hBitMap, "hBit2.bmp" )
+
+   lEfeito := .t.
+
+   aM1 :=  SetWindowControlsVisible( 'Main', .f.   )
+
+   BT_ClientAreaInvalidateAll( 'Main' )
 
 
    aThread  := hb_threadStart( HB_THREAD_INHERIT_PUBLIC, @xRode(), cArqT1, cArqCSV )
 
    // msginfo('obj Lançado')
 
-   While !lTermino 
-         Do Events 
-   Enddo 
+   nContador := 0
+
+
+   While !lTermino
+
+      If ( nContador >= 12 )
+         nContador := 0
+      End If
+
+      nContador++
+
+      Do Events
+   Enddo
 
 
    hb_threadDetach( aThread )   // close thread handle
    hb_threadQuitRequest( aThread )   //
 
-   
+
    nTotal   := 0
    nPerCent := 0
 
@@ -370,19 +391,18 @@ Function xStartProc()
 
    xLimpa()
 
-   Do Events 
-   
+   Do Events
+
    MsgInfo( 'Processo Concluido!' )
 
-   lEfeito := .f. 
+   lEfeito := .f.
 
 
-   
+
    BT_ClientAreaInvalidateAll( 'Main' )
 
-   
-    SetWindowControlsVisible('Main' , .t.  , aM1 , .t.  )
 
+   SetWindowControlsVisible( 'Main', .t., aM1, .t.  )
 
 REturn
 
@@ -504,6 +524,8 @@ FUNCTION xRode( cArqT12, cFileCSV  )
       End If
 
 
+
+
       Main .LblAndamento. Value := "Processando : " + AllTrim( Transform(   n1, "999,999,999" ) ) + "\" + AllTrim( Transform(  Len( aCsv ), "999,999,999"   ) )
 
 
@@ -522,7 +544,7 @@ FUNCTION xRode( cArqT12, cFileCSV  )
 
 
 
-   
+
 
 
    // SetWindowCursor( GetFormHandle( 'Main' ), IDC_ARROW )
@@ -599,54 +621,52 @@ Return cStr1
 FUNCTION QuotedStr( cVar )
 Return '"' + cVar + '"'
 
-function SetWindowControlsVisible(cForm , lVisible , aMVisible , lShow  )
+function SetWindowControlsVisible( cForm, lVisible, aMVisible, lShow  )
 
-	Local aControlList := {}
-	Local i        := 0
-	Local cCompo   := ''
-	Local aM1      := {}
-	Local lVisi2 := .f.
-	Local nIndice := 0
+   Local aControlList := {}
+   Local i        := 0
+   Local cCompo   := ''
+   Local aM1      := {}
+   Local lVisi2 := .f.
+   Local nIndice := 0
 
-	Default aMVisible := {}
-	Default lShow     := .f. 
-
-
-	//sysWait(.1)
+   Default aMVisible := {}
+   Default lShow     := .f.
 
 
-	For i := 1 to Len(_HMG_SYSDATA[4])
-		If _HMG_SYSDATA[4,i] == GetFormHandle(cForm)
-			If len(alltrim(_HMG_SYSDATA [  2,i])) > 0
-
-				lVisi2 := GetProperty( cForm , _HMG_SYSDATA [  2,i] , "Visible"  )
-
-				If lVisible
-
-					nIndice := Ascan( aMVisible , {|a,b| (a[1] == cForm) .And. (a[2] == _HMG_SYSDATA [  2,i] )  }  )
-
-					If (Len(aMVisible) > 0) .And. (nIndice > 0)
-						Setproperty( cForm , _HMG_SYSDATA [  2,i] , "Visible" , aMVisible[nIndice][3] )
-
-						If (lShow) .And. (aMVisible[nIndice][3] )
-							DoMethod( cForm ,   _HMG_SYSDATA [  2,i] , "Show" )
-						End If 
-
-					End If
-
-				Else
-					Aadd(aM1 , {   cForm , _HMG_SYSDATA [  2,i],  lVisi2 } )
-					Setproperty( cForm , _HMG_SYSDATA [  2,i] , "Visible" , lVisible )
-				End If
-
-				cCompo += (cForm + ' ' +  _HMG_SYSDATA [  2,i] )  + QUEBRA
-
-			End If
-		End If
-	Next i
-
-	hb_memowrit('compo1.txt' , cCompo)
+// sysWait(.1)
 
 
+   For i := 1 to Len( _HMG_SYSDATA[ 4 ] )
+      If _HMG_SYSDATA[ 4, i ] == GetFormHandle( cForm )
+         If len( alltrim( _HMG_SYSDATA[  2,i ] ) ) > 0
+
+            lVisi2 := GetProperty( cForm, _HMG_SYSDATA[  2, i ], "Visible"  )
+
+            If lVisible
+
+               nIndice := Ascan( aMVisible, {| a, b | ( a[ 1 ] == cForm ) .And. ( a[ 2 ] == _HMG_SYSDATA[  2,i ] )  }  )
+
+               If ( Len( aMVisible ) > 0 ) .And. ( nIndice > 0 )
+                  Setproperty( cForm, _HMG_SYSDATA[  2, i ], "Visible", aMVisible[ nIndice ][ 3 ] )
+
+                  If ( lShow ) .And. ( aMVisible[ nIndice ][ 3 ] )
+                     DoMethod( cForm,   _HMG_SYSDATA[  2, i ], "Show" )
+                  End If
+
+               End If
+
+            Else
+               Aadd( aM1, {   cForm, _HMG_SYSDATA[  2, i ],  lVisi2 } )
+               Setproperty( cForm, _HMG_SYSDATA[  2, i ], "Visible", lVisible )
+            End If
+
+            cCompo += ( cForm + ' ' +  _HMG_SYSDATA[  2, i ] )  + QUEBRA
+
+         End If
+      End If
+   Next i
+
+   hb_memowrit( 'compo1.txt', cCompo )
 
 Return aM1

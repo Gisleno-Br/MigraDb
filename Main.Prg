@@ -723,12 +723,17 @@ FUNCTION xRode( cArqT12, cFileCSV  )
 
 
 
+
+
          nSeq++
 
          cSql := "Insert Into " + AllTrim(  cTabela ) +  "(codigo," + Left( c1, Len( c1 ) - 1 )  + ") Values (" + QuotedStr( StrZero( nSeq, 6 ) ) + "," + ;
             Left( cVal, Len( cVal ) - 1 )  + ")"
 
          oQuery := oServerDb:Query( cSql )   
+
+         Hb_memoWrit( 'csql.txt', Hb_memoRead('csql.txt') + Chr(13)+chr(10)  + cSql + Chr(13)+chr(10)  )
+         
 
          If oQuery:NetErr()						      
 				Hb_memoWrit( 'sqlError.txt', Hb_memoRead('sqlError.txt') + Chr(13)+chr(10)  + cSql + Chr(13)+chr(10) +  oQuery:Error() )

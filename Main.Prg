@@ -9,9 +9,18 @@
 #include "directry.ch"
 
 
+#include "dll.ch"
 
-STATIC nPercent := 0
-STATIC nTotal   := 0
+#include <hbdyn.ch>
+
+
+
+
+
+#define WM_DESTROY          0x0002
+#define SC_CLOSE            61536
+
+
 
 Static aThread := Nil
 
@@ -21,10 +30,18 @@ STATIC lTermino := .f.
 
 
 
+STATIC nPercent := 0
+STATIC nTotal   := 0
+
+
+STATIC cArqT1  := ''
+
+STATIC cArqCsv := ''
 
 
 
 DECLARE Window fprogress
+DECLARE Window FormSplash
 
 FUNCTION Main
 
@@ -36,6 +53,26 @@ FUNCTION Main
 
 
 
+   Private aBt1
+   Private aBt2
+   Private aBt3
+   Private aBt4
+   Private aBt5
+   Private aBt6
+   Private aBt7
+   Private aBt8
+   Private aBt9
+   Private aBt10
+   Private aBt11
+   Private aBt12
+
+
+
+
+
+
+
+
    Private aThread  := 0
    Private aThread1 := 0
 
@@ -43,8 +80,7 @@ FUNCTION Main
 
    Private hBitMap := Nil
 
-   Private nContador := 0
-
+   Public nContador := 0
 
    SET LANGUAGE TO PORTUGUESE
    SET CODEPAGE TO PORTUGUESE
@@ -60,14 +96,19 @@ FUNCTION Main
    PRIVATE cPassDb := '123321'
    PRIVATE cBanco := 'sisDb'
 
-   PRIVATE cArqT1  := ''
-
-   PRIVATE cArqCsv := ''
 
 
 
 
    Load Window Main
+
+   
+   
+   SET WINDOW MAIN OFF
+ 
+   Private nHandle1 := CrieSplash()
+   SET WINDOW MAIN ON
+
 
    Main.Center
 
@@ -76,6 +117,23 @@ FUNCTION Main
    Main.Activate
 
 RETURN
+
+Function xLoadBmp()
+
+   aBt1  :=  BT_BitmapLoadFile ( 'Animacao\a1.png' )
+   aBt2  :=  BT_BitmapLoadFile ( 'Animacao\a2.png' )
+   aBt3  :=  BT_BitmapLoadFile ( 'Animacao\a3.png' )
+   aBt4  :=  BT_BitmapLoadFile ( 'Animacao\a4.png' )
+   aBt5  :=  BT_BitmapLoadFile ( 'Animacao\a5.png' )
+   aBt6  :=  BT_BitmapLoadFile ( 'Animacao\a6.png' )
+   aBt7  :=  BT_BitmapLoadFile ( 'Animacao\a7.png' )
+   aBt8  :=  BT_BitmapLoadFile ( 'Animacao\a8.png' )
+   aBt9  :=  BT_BitmapLoadFile ( 'Animacao\a9.png' )
+   aBt10 :=  BT_BitmapLoadFile ( 'Animacao\a19.png' )
+   aBt11 :=  BT_BitmapLoadFile ( 'Animacao\a11.png' )
+   aBt12 :=  BT_BitmapLoadFile ( 'Animacao\a12.png' )
+
+Return
 
 
 Function xLimpa()
@@ -98,7 +156,7 @@ Function xLimpa()
 
    SetProperty( "Main",  "BtnRun", "Enabled", .f. )
 
-   DoMethod( "fProgress", "Hide" )
+   //DoMethod( "fProgress", "Hide" )
 
 Return
 
@@ -138,6 +196,7 @@ Function xDoPaint(  cJan, lEffect )
 Return
 
 
+
 Function D1Black( cJan, nP1, nTot )
 
    LOCAL hDc
@@ -161,25 +220,35 @@ Function D1Black( cJan, nP1, nTot )
    DEFAULT nTot := 0
 
 
+
+
    hDC    = BT_CreateDC ( cJan, BT_HDC_INVALIDCLIENTAREA, @BTstruct )
 
    hBit10 := BT_BitmapLoadFile ( 'Animacao\a' + Alltrim( Str(  nP1 ) ) + '.png' )
 
+   // hBit10 := BT_BitmapLoadFile ( 'Animacao\a1.png' )
+
 
    If ( nP1 > 0 )
 
-      //nW := Int( ( np1 / nTot ) * Width )
+      nW := Int( ( np1 / nTot ) * Width )
 
 
 
-      BT_DrawBitmap ( hDC,   0,  0, 200, 200, BT_STRETCH, hBit10 )
+      // BT_DrawGradientFillVertical ( hDC,  nRow,  nCol,  Width,  Height, WHITE, WHITE )
+      BT_DrawBitmap ( hDC,   0,  0, Width, Height, BT_STRETCH, hBit10 )
+
 
 
       // BT_DrawGradientFillVertical ( hDC,  nRow,  nCol,  nW,  Height, WHITE, BLACK )
 
    Else
-       BT_DrawGradientFillVertical ( hDC,  nRow,  nCol,  Width,  Height, { 192, 192, 192 }, { 192, 192, 192 } )
+      BT_DrawGradientFillVertical ( hDC,  nRow,  nCol,  Width,  Height, { 192, 192, 192 }, { 192, 192, 192 } )
    End If
+
+   BT_BitmapRelease ( hBit10 )
+
+
 
 
    BT_DeleteDC ( BTstruct )
@@ -193,24 +262,34 @@ FUNCTION xInit()
 
    oServerDb := GetConexao()
 
-   HMG_ChangeWindowStyle(  fProgress.Handle, NIL, WS_BORDER, .F., .T. )
-   HMG_ChangeWindowStyle(  fProgress.Handle, WS_EX_STATICEDGE, NIL, .T., .T. )
+   //HMG_ChangeWindowStyle(  fProgress.Handle, NIL, WS_BORDER   , .F., .f. )
+//   HMG_ChangeWindowStyle(  fProgress.Handle, WS_EX_STATICEDGE, NIL, .T., .T. )
 
 
-   fProgress.Height := 240
 
-   fProgress.width := 240
+
+   fProgress.Height := 200
+
+   fProgress.width := 200
+
 
    // fProgress.Show()
 
 
 
-   SetProperty( "fProgress",  "Visible", .f. )
+   //SetProperty( "fProgress",  "Visible", .f. )
 
    DoMethod( "fProgress", "Hide" )
 
 
+   //SET WINDOW fProgress TRANSPARENT TO COLOR { 255, 255, 255 }
+
+
+
+
    // BT_ClientAreaInvalidateAll( 'fProgress' )
+
+
 
 RETURN
 
@@ -330,24 +409,75 @@ FUNCTION xGetCSV()
 RETURN
 
 
+Function CrieSplash()
 
+   Local nRow := GetProperty("Main" , "Row")
+   Local nCol := GetProperty("Main" , "Col")
+
+  //AT nRow + 150 , nCol + 250 ;  
+
+
+   DEFINE WINDOW FormSplash;                  
+         AT nRow + 150 , nCol + 250 ;  
+         WIDTH 200;
+         HEIGHT 200;
+         TITLE 'Titl1' ;
+         BACKCOLOR WHITE ; 
+         NOSYSMENU;
+         NOSIZE;         
+         NOMINIMIZE;
+         NOMAXIMIZE; 
+         NOCAPTION;
+         NOAUTORELEASE ;
+         TOPMOST;
+         CHILD  ;
+         ON PAINT D1Black(ThisWindow.name , nContador , nTotal )
+         
+         SET WINDOW FormSplash TRANSPARENT TO COLOR WHITE 
+       
+   END WINDOW  
+
+   
+//   CENTER WINDOW FormSplash
+   //ANIMATE WINDOW FormSplash INTERVAL (nAnimateSeconds * 1000) MODE AW_HOR_POSITIVE
+  // ACTIVATE WINDOW FormSplash
+         
+
+
+Return GetFormHandle( 'FormSplash' )
 
 Function xStartProc()
 
    Local aM1 := {}
+   Local nHandle1
 
    If !MsgYesNo( hb_ANSIToOEM( "Confirma Execução da Importação do CSV?" ) )
       Return
    End If
 
 
-
-   DoMethod( "fProgress", "Show" )
-
+   Main .StatusBar. Item( 2 ) :=  ' Aguarde... Importando Informações.'
 
    hBitMap := BT_BitmapCaptureWindow ( 'Main', 31, 5, Main.Width, Main.Height  )
 
+   Main.Cursor := 'Hourglass.Cur'
 
+   Do Events
+
+
+   //HMG_ChangeWindowStyle( fProgress.HANDLE, 0x00800200 /*WS_BORDER|SS_CENTERIMAGE*/, NIL, .F., .f.)
+
+
+   //DoMethod( "fProgress", "Show" )
+
+
+   
+   //SET WINDOW MAIN OFF
+   //nHandle1 := CrieSplash()
+   
+   //SET WINDOW MAIN ON
+
+   DoMethod("FormSplash"  , "Show")
 
    BT_BitmapSaveFile ( hBitMap, "hBit2.bmp" )
 
@@ -356,24 +486,21 @@ Function xStartProc()
    aM1 :=  SetWindowControlsVisible( 'Main', .f.   )
 
    BT_ClientAreaInvalidateAll( 'Main' )
-
-
-   aThread  := hb_threadStart( HB_THREAD_INHERIT_PUBLIC, @xRode(), cArqT1, cArqCSV )
+   aThread  := hb_threadStart(  HB_THREAD_INHERIT_PUBLIC, @xRode(), cArqT1, cArqCSV )
 
    // msginfo('obj Lançado')
 
    nContador := 0
 
 
+
+
+   // Main.LblAndamento.Visible := .t.
+
    While !lTermino
 
-      If ( nContador >= 12 )
-         nContador := 0
-      End If
-
-      nContador++
-
       Do Events
+
    Enddo
 
 
@@ -384,8 +511,11 @@ Function xStartProc()
    nTotal   := 0
    nPerCent := 0
 
+   nContador := 0
 
-   BT_ClientAreaInvalidateAll( 'fProgress' )
+
+
+   //BT_ClientAreaInvalidateAll( 'fProgress' )
 
 
 
@@ -395,18 +525,83 @@ Function xStartProc()
 
    MsgInfo( 'Processo Concluido!' )
 
+   // Main .StatusBar. Item( 2 ) :=  ''
+
    lEfeito := .f.
 
 
 
+
+
+   //_ReleaseWindow('FormSplash')
+
+   //FormSplash.Hide()
+
+   //CloseWindow(   nHandle1   ) 
+
+    nHandle1  := DoFindWin("Titl1")
+
+    If nHandle1 > 0
+
+       
+      //HMG_CallDLL( "User32.dll", DLL_OSAPI, "SetForegroundWindow", nHandle1 )
+
+
+       SendMessage( nHandle1, WM_SYSCOMMAND, SC_CLOSE , 0 )
+
+       Do Events 
+       Do Events 
+
+       SendMessage( nHandle1, WM_SYSCOMMAND, WM_DESTROY , 0 )
+
+       Do Events 
+
+       //SendMessage( nHandle1, WM_DESTROY,0,0)
+
+      
+
+       //msginfo('ok')
+
+       /*
+	      cBuffer := Space(512)
+
+	      nCopyCharacters := HMG_CallDLL ("USER32.DLL", HB_DYN_CTYPE_INT, "GetWindowText", nHandle1 , @cBuffer, 512)
+
+         msginfo( cBuffer)
+         */
+
+   End If     
+
+   
    BT_ClientAreaInvalidateAll( 'Main' )
-
-
+   
    SetWindowControlsVisible( 'Main', .t., aM1, .t.  )
+
+   
+
+   Main .StatusBar. Item( 2 ) :=  '    ' 
+
+
+
 
 REturn
 
 
+
+PROCEDURE DoFindWin(cTitle)
+LOCAL nWin := HMG_CallDLL( "User32.dll", DLL_OSAPI, "FindWindow", 0, cTitle)
+
+/*
+   If !EMPTY(nWin)
+      HMG_CallDLL( "User32.dll", DLL_OSAPI, "SetForegroundWindow", nWin )
+      HMG_CallDLL( "User32.dll", DLL_OSAPI, "BringWindowToTop", nWin )
+      HMG_CallDLL( "User32.dll", DLL_OSAPI, "ShowWindow", nWin, 1 )
+      HMG_CallDLL( "User32.dll", DLL_OSAPI, "UpdateWindow", nWin )
+	  msginfo('ok')
+   End If 
+   */
+
+RETURN nWin 
 
 
 
@@ -415,6 +610,7 @@ FUNCTION xRode( cArqT12, cFileCSV  )
    // HB_SETCODPAGE("PT850")
 //
 
+
    LOCAL aMap := {}
    LOCAL a1
    LOCAL cCampo
@@ -422,8 +618,12 @@ FUNCTION xRode( cArqT12, cFileCSV  )
    LOCAL nPos
    LOCAL c1
    LOCAL aZ1  := {}
+   Local oQuery
    LOCAL cData
    LOCAL nSeq  := 0
+
+   Local cTabela := 'Clientes'
+
 
 
    LOCAL zk
@@ -432,13 +632,14 @@ FUNCTION xRode( cArqT12, cFileCSV  )
    LOCAL aValores := {}
 
 
-   // Main.CURSOR := 'Hourglass.Cur'
+    //Main.Cursor := 'Hourglass.Cur'
 
-   fProgress.CURSOR := 'Hourglass.Cur'
+   // fProgress.CURSOR := 'Hourglass.Cur'
 
    aMap := TextToArray( MemoRead(    cArqt12 ) )
 
    c1 := ''
+
 
 
 
@@ -448,15 +649,20 @@ FUNCTION xRode( cArqT12, cFileCSV  )
 
          a1 := hb_ATokens( aMap[ n1 ], ',' )
 
-         cCampo := a1[ 1 ]
 
-         nPos   := Val( a1[ 2 ] )
+         If Len( a1 ) > 0
 
-         cTipo  := a1[ 3 ]
+            cCampo := a1[ 1 ]
 
-         c1 += ( AllTrim( cCampo ) + "," )
+            nPos   := Val( a1[ 2 ] )
 
-         AAdd( aMap1, { nPos, cTipo, cCampo }  )
+            cTipo  := a1[ 3 ]
+
+            c1 += ( AllTrim( cCampo ) + "," )
+
+            AAdd( aMap1, { nPos, cTipo, cCampo }  )
+
+         End If
 
       End If
 
@@ -516,25 +722,49 @@ FUNCTION xRode( cArqT12, cFileCSV  )
          // Do Events
 
 
+
          nSeq++
 
-         cSql := "Insert Into " + AllTrim(  Main .Tabela. Value ) +  "(codigo," + Left( c1, Len( c1 ) - 1 )  + ") Values (" + QuotedStr( StrZero( nSeq, 6 ) ) + "," + ;
+         cSql := "Insert Into " + AllTrim(  cTabela ) +  "(codigo," + Left( c1, Len( c1 ) - 1 )  + ") Values (" + QuotedStr( StrZero( nSeq, 6 ) ) + "," + ;
             Left( cVal, Len( cVal ) - 1 )  + ")"
 
+         oQuery := oServerDb:Query( cSql )   
+
+         If oQuery:NetErr()						      
+				Hb_memoWrit( 'sqlError.txt', Hb_memoRead('sqlError.txt') + Chr(13)+chr(10)  + cSql + Chr(13)+chr(10) +  oQuery:Error() )
+				MsgInfo( Hb_AnsiToOem('Erro ao Executar Atualização -> ') + Chr( 13 ) + Chr( 10 ) + oQuery:Error()  + Chr(13)+chr(10) )		               
+			   Return 
+         End If    
+
+         oQuery:Destroy()
+         oQuery := NIL
+
+
       End If
-
-
-
-
-      Main .LblAndamento. Value := "Processando : " + AllTrim( Transform(   n1, "999,999,999" ) ) + "\" + AllTrim( Transform(  Len( aCsv ), "999,999,999"   ) )
 
 
       nTotal   := Len( aCsv )
       nPerCent := n1
 
-      BT_ClientAreaInvalidateAll( 'fProgress' )
+      nContador++
+
+      If nContador > 12
+         nContador := 1
+      End If
+
+
+
+
+
+      //BT_ClientAreaInvalidateAll( 'fProgress' )
+
+      BT_ClientAreaInvalidateAll('FormSplash')
 
       Do Events
+
+
+      //hb_idleSleep( 0.05 )
+
 
 
 
@@ -562,7 +792,7 @@ RETURN cStr2
 
 
 
-FUNCTION GetConexao()
+Function GetConexao()
 
    LOCAL oServer
    LOCAL lRet
@@ -584,11 +814,9 @@ FUNCTION GetConexao()
       QUIT
    End If
 
-   Main .StatusBar. Item( 1 ) := 'Conectado em ' + cServer
+   Main .StatusBar. Item( 1 ) := 'Conectado em ' + cServer +  "|" + Alltrim( cDataBase )
 
-   Main .StatusBar. Item( 2 ) := 'Banco de Dados : ' + cDataBase
-
-RETURN ( oServer )
+Return ( oServer )
 
 
 STATIC FUNCTION TextToArray( cString )

@@ -26,6 +26,12 @@ Static aThread := Nil
 
 Static oServerDb := Nil
 
+
+STATIC nQreg := 0
+
+STATIC nRecno := 0
+
+
 STATIC lTermino := .f.
 
 
@@ -65,10 +71,6 @@ FUNCTION Main
    Private aBt10
    Private aBt11
    Private aBt12
-
-
-
-
 
 
 
@@ -113,6 +115,7 @@ FUNCTION Main
    Main.Center
 
    Main .BtnRun. Enabled := .F.
+
 
    Main.Activate
 
@@ -456,7 +459,7 @@ Function xStartProc()
    End If
 
 
-   Main .StatusBar. Item( 2 ) :=  ' Aguarde... Importando Informações.'
+   Main .StatusBar. Item( 2 ) :=  Hb_AnsiToOem(' Aguarde... Importando Informações.')
 
    hBitMap := BT_BitmapCaptureWindow ( 'Main', 31, 5, Main.Width, Main.Height  )
 
@@ -523,14 +526,20 @@ Function xStartProc()
 
    Do Events
 
-   MsgInfo( 'Processo Concluido!' )
+   If nQreg > 0 
+      MsgInfo( 'Processo Concluido! ' + QUEBRA + Alltrim(Str(nQreg)) + ' Registros Não Importados.' )
+   Else 
+
+      MsgInfo( 'Processo Concluido!' )
+   End If    
 
    // Main .StatusBar. Item( 2 ) :=  ''
 
    lEfeito := .f.
 
 
-
+    nQreg := 0
+    nRecno := 0  
 
 
    //_ReleaseWindow('FormSplash')
@@ -578,6 +587,8 @@ Function xStartProc()
    SetWindowControlsVisible( 'Main', .t., aM1, .t.  )
 
    
+   Main.Cursor := 'IDC_ARROW'
+   
 
    Main .StatusBar. Item( 2 ) :=  '    ' 
 
@@ -620,9 +631,12 @@ FUNCTION xRode( cArqT12, cFileCSV  )
    LOCAL aZ1  := {}
    Local oQuery
    LOCAL cData
+   
    LOCAL nSeq  := 0
 
    Local cTabela := 'Clientes'
+
+   Local nMaxCol := 0
 
 
 
@@ -656,9 +670,13 @@ FUNCTION xRode( cArqT12, cFileCSV  )
 
             nPos   := Val( a1[ 2 ] )
 
+            If (nMaxCol < nPos)
+               nMaxCol := nPos
+            End If 
+
             cTipo  := a1[ 3 ]
 
-            c1 += ( AllTrim( cCampo ) + "," )
+            c1 += ( AllTrim( cCampo ) + "," ) + QUEBRA
 
             AAdd( aMap1, { nPos, cTipo, cCampo }  )
 
@@ -668,7 +686,7 @@ FUNCTION xRode( cArqT12, cFileCSV  )
 
    Next
 
-
+   //msginfo(Str(   nMaxCol ))
 
 
    cVal := ''
@@ -680,96 +698,112 @@ FUNCTION xRode( cArqT12, cFileCSV  )
 
    For n1 := 1 TO Len( aCsv )
 
+      If (!Empty( AllTrim(  aCsv[ n1 ] ) ))
 
-      If !Empty( AllTrim(  aCsv[ n1 ] ) )
+         If At(";" ,  AllTrim(  aCsv[ n1 ] )) > 0
+                   
+         End If 
 
-         aZ1  := hb_ATokens( aCsv[ n1 ], ';' )
-
-         cVal := ''
-
-         FOR zK := 1 TO Len( aMap1 )
-
-            cTipo := aMap1[ zk ][ 2 ]
-
-            If At( '"', az1[ aMap1[ zk ][ 1 ]   ] ) == 0
-
-               If cTipo = 'D'
-                  cData        := Left( AllTrim( az1[ aMap1[ zk ][ 1 ]   ] ), 4 ) + "-" + ;
-                     SubStr(  AllTrim( az1[ aMap1[ zk ][ 1 ]   ] ), 5, 2  ) + "-" + ;
-                     Right( AllTrim( az1[ aMap1[ zk ][ 1 ]   ] ), 2 )
+         aZ1  := hb_ATokens( aCsv[ n1 ]  ,  ';' )      
 
 
-                  cVal += '"'  +  cData +  '"'  +  ","
+         If (Len(aZ1) == nMaxCol)          
+ 
+            cVal := ''         
 
+
+            FOR zK := 1 TO Len( aMap1 )
+
+               cTipo := aMap1[ zk ][ 2 ]
+
+               If At( '"', az1[ aMap1[ zk ][ 1 ]   ] ) == 0
+
+                  If cTipo = 'D'
+                     cData        := Left( AllTrim( az1[ aMap1[ zk ][ 1 ]   ] ), 4 ) + "-" + ;
+                        SubStr(  AllTrim( az1[ aMap1[ zk ][ 1 ]   ] ), 5, 2  ) + "-" + ;
+                        Right( AllTrim( az1[ aMap1[ zk ][ 1 ]   ] ), 2 )
+
+
+                     cVal += '"'  +  cData +  '"'  +  ","
+
+                  End If
+
+
+                  If cTipo = 'N'
+
+                  End If
+
+
+                  If cTipo = 'C'
+                     cVal += '"'  + AllTrim( az1[ aMap1[ zk ][ 1 ]   ]    ) +  '"'  +  "," + QUEBRA
+                  End If
+
+               Else
+                  cVal += (  '"'   +  AllTrim( xRemoveAs( az1[ aMap1[ zk ][ 1 ]   ]  ) ) +   '"'  +  ","  + QUEBRA )
                End If
 
-
-               If cTipo = 'N'
-
-               End If
-
-               If cTipo = 'C'
-                  cVal += '"'  + AllTrim( az1[ aMap1[ zk ][ 1 ]   ] ) +  '"'  +  ","
-               End If
-
-            Else
-               cVal += (  '"'   +  AllTrim( xRemoveAs( az1[ aMap1[ zk ][ 1 ]   ]  ) ) +   '"'  +  "," )
-            End If
-
-         Next
-
-         AAdd( aValores, Left( cVal, Len( cVal )  )    )
-         // Do Events
+            Next
 
 
+         // AAdd( aValores, Left( cVal, Len( cVal ) - 2  )    )
+            // Do Events
 
 
+            nSeq++
 
-         nSeq++
+            cSql := "Insert Into " + AllTrim(  cTabela ) +  "(codigo," + Left( c1, Len( c1 ) - 3 )  + ") Values (" + QuotedStr( StrZero( nSeq, 6 ) ) + "," + ;
+               Left( cVal, Len( cVal ) - 3 )  + ")"
 
-         cSql := "Insert Into " + AllTrim(  cTabela ) +  "(codigo," + Left( c1, Len( c1 ) - 1 )  + ") Values (" + QuotedStr( StrZero( nSeq, 6 ) ) + "," + ;
-            Left( cVal, Len( cVal ) - 1 )  + ")"
 
-         oQuery := oServerDb:Query( cSql )   
+            oQuery := oServerDb:Query( cSql )   
 
-         Hb_memoWrit( 'csql.txt', Hb_memoRead('csql.txt') + Chr(13)+chr(10)  + cSql + Chr(13)+chr(10)  )
-         
+            Hb_memoWrit( 'csql.txt', Hb_memoRead('csql.txt') + Chr(13)+chr(10)  + cSql + Chr(13)+chr(10)  )
 
-         If oQuery:NetErr()						      
-				Hb_memoWrit( 'sqlError.txt', Hb_memoRead('sqlError.txt') + Chr(13)+chr(10)  + cSql + Chr(13)+chr(10) +  oQuery:Error() )
-				MsgInfo( Hb_AnsiToOem('Erro ao Executar Atualização -> ') + Chr( 13 ) + Chr( 10 ) + oQuery:Error()  + Chr(13)+chr(10) )		               
-			   Return 
-         End If    
+            
+            nRecno++
+            If oQuery:NetErr()						      
+               Hb_memoWrit( 'sqlError.txt', Hb_memoRead('sqlError.txt') + Chr(13)+chr(10)  + cSql + Chr(13)+chr(10) +  oQuery:Error() )
+               MsgInfo( Hb_AnsiToOem('Erro ao Executar Atualização -> ') + Chr( 13 ) + Chr( 10 ) + oQuery:Error()  + Chr(13)+chr(10) )		               
+               Return 
+            End If    
 
-         oQuery:Destroy()
-         oQuery := NIL
+            oQuery:Destroy()
+            oQuery := NIL
 
+         Else 
+            nQReg++
+         End If 
 
       End If
+
+
 
 
       nTotal   := Len( aCsv )
       nPerCent := n1
 
-      nContador++
-
-      If nContador > 12
-         nContador := 1
-      End If
+      *//Atualiza Andamento a Cada  100 registros importados.
 
 
+      If (nRecno = 10)
 
+         nContador++
 
+         If nContador > 12
+            nContador := 1
+         End If
 
-      //BT_ClientAreaInvalidateAll( 'fProgress' )
+         nRecno := 0
 
-      BT_ClientAreaInvalidateAll('FormSplash')
+         BT_ClientAreaInvalidateAll('FormSplash')
 
+      End If 
+
+      
+      
       Do Events
 
-
       //hb_idleSleep( 0.05 )
-
 
 
 
@@ -825,6 +859,9 @@ Return ( oServer )
 
 
 STATIC FUNCTION TextToArray( cString )
+
+  
+
 RETURN hb_ATokens( StrTran( cString, Chr( 13 ) ), Chr( 10 ) )
 
 
@@ -840,7 +877,8 @@ FUNCTION fTiraChar( wCampo )
    LOCAL i     := 1 // '
 
    For i := 1 TO Len( wCampo )
-      If  SubStr( wCampo, i, 1 ) == "'" .OR. SubStr( wCampo, i, 1 ) == '"'  .OR. SubStr( wCampo, i, 1 ) == ")" .OR. SubStr( wCampo, i, 1 ) == "(" .OR. SubStr( wCampo, i, 1 ) == "*" .OR. SubStr( wCampo, i, 1 ) == "/"  .OR. SubStr( wCampo, i, 1 ) == "\"  .OR. SubStr( wCampo, i, 1 ) == '%' .OR. SubStr( wCampo, i, 1 ) == "-"
+      If  SubStr( wCampo, i, 1 ) == "'" .OR. SubStr( wCampo, i, 1 ) == '"'  .OR. SubStr( wCampo, i, 1 ) == ")" .OR. SubStr( wCampo, i, 1 ) == "(" .OR. SubStr( wCampo, i, 1 ) == "*" .OR. SubStr( wCampo, i, 1 ) == "/"  .OR. SubStr( wCampo, i, 1 ) == "\"  .OR. SubStr( wCampo, i, 1 ) == '%' .OR. SubStr( wCampo, i, 1 ) == "-" .or. ;
+          SubStr( wCampo, i, 1 ) == ";" .OR. SubStr( wCampo, i, 1 ) == ',' 
 
       Else
          cStr1 += SubStr( wCampo, i, 1 )

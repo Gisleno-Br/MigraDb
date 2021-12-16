@@ -1,0 +1,28 @@
+// Using a resource file like this, you can include bitmaps, icons and sounds
+// inside EXE.
+//Logo1  BITMAP  Images\Logo.BMP
+//Logo2  JPG       Images\Logo.JPG
+//Logo3  GIF       Images\Logo.GIF
+//Logo4  PNG      Images\Logo.PNG
+//Logo5  TIF       Images\Logo.TIF
+//	Resource name	Resouce Type    Resource FileName
+//
+	//RESWAVE		WAVE 		SAMPLE.WAV
+//	RESBUTTON	BITMAP		BUTTON.BMP
+
+	WORLD		ICON		WORLD.ICO
+	HAND1	   CURSOR   hourglass.cur
+	
+	L1  PNG     Animacao\a1.PNG
+	L2  PNG     Animacao\a2.PNG
+	L3  PNG     Animacao\a3.PNG
+	L4  PNG     Animacao\a4.PNG
+	L5  PNG     Animacao\a5.PNG
+	L6  PNG     Animacao\a6.PNG
+	L7  PNG     Animacao\a7.PNG
+	L8  PNG     Animacao\a8.PNG
+	L9  PNG     Animacao\a9.PNG
+	L10  PNG     Animacao\a10.PNG
+	L11  PNG     Animacao\a10.PNG
+	L12  PNG     Animacao\a12.PNG
+	

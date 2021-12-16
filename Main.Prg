@@ -227,7 +227,9 @@ Function D1Black( cJan, nP1, nTot )
 
    hDC    = BT_CreateDC ( cJan, BT_HDC_INVALIDCLIENTAREA, @BTstruct )
 
-   hBit10 := BT_BitmapLoadFile ( 'Animacao\a' + Alltrim( Str(  nP1 ) ) + '.png' )
+   //hBit10 := BT_BitmapLoadFile ( 'Animacao\a' + Alltrim( Str(  nP1 ) ) + '.png' )
+
+    hBit10 := BT_BitmapLoadFile ( 'L' +  Alltrim( Str(  nP1 ) )   )
 
    // hBit10 := BT_BitmapLoadFile ( 'Animacao\a1.png' )
 
@@ -463,7 +465,8 @@ Function xStartProc()
 
    hBitMap := BT_BitmapCaptureWindow ( 'Main', 31, 5, Main.Width, Main.Height  )
 
-   Main.Cursor := 'Hourglass.Cur'
+   //Main.Cursor := 'HAND1'
+   
 
    Do Events
 
@@ -472,6 +475,8 @@ Function xStartProc()
 
 
    //DoMethod( "fProgress", "Show" )
+
+
 
 
    
@@ -505,6 +510,8 @@ Function xStartProc()
       Do Events
 
    Enddo
+
+
 
 
    hb_threadDetach( aThread )   // close thread handle

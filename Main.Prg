@@ -456,34 +456,28 @@ Function xStartProc()
    Local aM1 := {}
    Local nHandle1
 
+
    If !MsgYesNo( hb_ANSIToOEM( "Confirma Execução da Importação do CSV?" ) )
       Return
    End If
+
 
 
    Main .StatusBar. Item( 2 ) :=  Hb_AnsiToOem(' Aguarde... Importando Informações.')
 
    hBitMap := BT_BitmapCaptureWindow ( 'Main', 31, 5, Main.Width, Main.Height  )
 
-   //Main.Cursor := 'HAND1'
+   Main.Cursor := 'HAND1'
    
+   //RESOURCECURSOR('HAND1')
 
    Do Events
 
 
-   //HMG_ChangeWindowStyle( fProgress.HANDLE, 0x00800200 /*WS_BORDER|SS_CENTERIMAGE*/, NIL, .F., .f.)
-
-
-   //DoMethod( "fProgress", "Show" )
 
 
 
 
-   
-   //SET WINDOW MAIN OFF
-   //nHandle1 := CrieSplash()
-   
-   //SET WINDOW MAIN ON
 
    DoMethod("FormSplash"  , "Show")
 
@@ -549,6 +543,8 @@ Function xStartProc()
     nRecno := 0  
 
 
+
+
    //_ReleaseWindow('FormSplash')
 
    //FormSplash.Hide()
@@ -558,6 +554,7 @@ Function xStartProc()
     nHandle1  := DoFindWin("Titl1")
 
     If nHandle1 > 0
+
 
        
       //HMG_CallDLL( "User32.dll", DLL_OSAPI, "SetForegroundWindow", nHandle1 )
@@ -571,6 +568,7 @@ Function xStartProc()
        SendMessage( nHandle1, WM_SYSCOMMAND, WM_DESTROY , 0 )
 
        Do Events 
+
 
        //SendMessage( nHandle1, WM_DESTROY,0,0)
 
@@ -602,8 +600,23 @@ Function xStartProc()
 
 
 
+
+
 REturn
 
+
+
+Function DoMinize()
+    Local nHandle1  := DoFindWin("Titl1")
+
+    If nHandle1 > 0
+         If  isWindowVisible(nHandle1)
+            msginfo('pl2')
+         End If    
+    End If 
+
+
+Return 
 
 
 PROCEDURE DoFindWin(cTitle)
@@ -948,3 +961,6 @@ function SetWindowControlsVisible( cForm, lVisible, aMVisible, lShow  )
    hb_memowrit( 'compo1.txt', cCompo )
 
 Return aM1
+
+
+

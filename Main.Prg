@@ -461,6 +461,13 @@ Function xStartProc()
       Return
    End If
 
+   
+	IF !hb_mtvm()
+		MSGSTOP("There is no support for multi-threading")
+		QUIT
+	ENDIF
+
+
 
 
    Main .StatusBar. Item( 2 ) :=  Hb_AnsiToOem(' Aguarde... Importando Informações.')

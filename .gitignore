@@ -32,3 +32,7 @@ Main.bak
 .hbmk/win/mingw64/Main.o
 .hbmk/win/mingw64/Main.c
 .hbmk/win/mingw64/Main.o
+.hbmk/win/mingw64/Main.c
+.hbmk/win/mingw64/Main.o
+sqlError.txt
+csql.txt

@@ -561,8 +561,6 @@ Function xStartProc()
     nHandle1  := DoFindWin("Titl1")
 
     If nHandle1 > 0
-
-
        
       //HMG_CallDLL( "User32.dll", DLL_OSAPI, "SetForegroundWindow", nHandle1 )
 
